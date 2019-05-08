@@ -32,11 +32,13 @@ public class Monster {
 
   // Battle stats
   public int currentInitiative = 0;
+  public int location = 0;
+  public GameObject body;
 
   public Monster(string name = "None", int species = 0) {
     this.name = name;
     this.speciesID = species;
-    this.monID = Random.Range(0, 100000);
+    this.monID = Random.Range(0, 10);
 
     type = EType.Normal;
     str = 5;

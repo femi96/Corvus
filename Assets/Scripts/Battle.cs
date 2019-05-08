@@ -10,6 +10,8 @@ public class Battle : MonoBehaviour {
   public List<Monster> monsters;
   public Monster currentMonster;
 
+  public Color[] colors;
+
   void Start() {
     sideLeft = new Monster[3];
     sideRight = new Monster[3];
@@ -17,6 +19,13 @@ public class Battle : MonoBehaviour {
     sideLeft[0] = new Monster();
     sideRight[1] = new Monster();
     sideRight[2] = new Monster();
+    UpdateMonsterLocations();
+
+    colors = new Color[10];
+
+    for (int i = 0; i < 10; i++) {
+      colors[i] = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
+    }
 
     GenerateGameObjects();
     GetNextTurn();
@@ -28,6 +37,9 @@ public class Battle : MonoBehaviour {
   public GameObject monPrefab;
 
   private void GenerateGameObjects() {
+    foreach (Transform child in transform) {
+      Destroy(child.gameObject);
+    }
 
     Vector3 spacing = new Vector3(1.2f, 0, 0);
     Vector3 monHeight = Vector3.up;
@@ -42,11 +54,15 @@ public class Battle : MonoBehaviour {
       if (sideRight[i] != null) {
         go = Instantiate(monPrefab, transform);
         go.transform.position = spacing * (i + 1) + monHeight;
+        sideRight[i].body = go;
+        go.GetComponent<Renderer>().material.SetColor("_Color", colors[sideRight[i].monID]);
       }
 
       if (sideLeft[i] != null) {
         go = Instantiate(monPrefab, transform);
         go.transform.position = spacing * (i + 1) * -1 + monHeight;
+        sideLeft[i].body = go;
+        go.GetComponent<Renderer>().material.SetColor("_Color", colors[sideLeft[i].monID]);
       }
     }
   }
@@ -55,9 +71,14 @@ public class Battle : MonoBehaviour {
     GetNextTurn();
   }
 
-  private void MoveMonster(int monster, int dir) {
-    int side = monster / 3; // 0 is left, 1 is right
-    int pos = monster % 3;
+  public void ActionMove(int dir) {
+    MoveMonster(currentMonster.location, dir);
+    GetNextTurn();
+  }
+
+  private void MoveMonster(int loc, int dir) {
+    int side = loc / 3; // 0 is left, 1 is right
+    int pos = loc % 3;
 
     Monster movingMon;
 
@@ -74,11 +95,28 @@ public class Battle : MonoBehaviour {
         sideLeft[pos] = sideLeft[pos + i];
         sideLeft[pos + i] = movingMon;
         pos += i;
+        dir -= i;
       } else {
         movingMon = sideRight[pos];
         sideRight[pos] = sideRight[pos + i];
         sideRight[pos + i] = movingMon;
         pos += i;
+        dir -= i;
+      }
+    }
+
+    GenerateGameObjects();
+    UpdateMonsterLocations();
+  }
+
+  private void UpdateMonsterLocations() {
+    for (int i = 0; i < 3; i++) {
+      if (sideLeft[i] != null) {
+        sideLeft[i].location = i;
+      }
+
+      if (sideRight[i] != null) {
+        sideRight[i].location = 3 + i;
       }
     }
   }
