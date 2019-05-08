@@ -12,6 +12,7 @@ public class Monster {
   public string name;
   public int speciesID;
   public EType type;
+  public int monID;
 
   // Attributes
   public int str;
@@ -35,6 +36,7 @@ public class Monster {
   public Monster(string name = "None", int species = 0) {
     this.name = name;
     this.speciesID = species;
+    this.monID = Random.Range(0, 100000);
 
     type = EType.Normal;
     str = 5;

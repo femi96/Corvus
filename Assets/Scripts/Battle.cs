@@ -8,6 +8,7 @@ public class Battle : MonoBehaviour {
   public Monster[] sideLeft;
   public Monster[] sideRight;
   public List<Monster> monsters;
+  public Monster currentMonster;
 
   void Start() {
     sideLeft = new Monster[3];
@@ -18,6 +19,7 @@ public class Battle : MonoBehaviour {
     sideRight[2] = new Monster();
 
     GenerateGameObjects();
+    GetNextTurn();
   }
 
   void Update() {}
@@ -25,7 +27,7 @@ public class Battle : MonoBehaviour {
   public GameObject tilePrefab;
   public GameObject monPrefab;
 
-  public void GenerateGameObjects() {
+  private void GenerateGameObjects() {
 
     Vector3 spacing = new Vector3(1.2f, 0, 0);
     Vector3 monHeight = Vector3.up;
@@ -87,11 +89,14 @@ public class Battle : MonoBehaviour {
     }
   }
 
+  public int monsterID;
   private void GetNextTurn() {
-    GetNextMonster();
+    currentMonster = GetNextMonster();
+    monsterID = currentMonster.monID;
   }
 
   private Monster GetNextMonster() {
+    UpdateMonsters();
     int bestInit = 0;
     List<Monster> bestMons = new List<Monster>();
 
@@ -103,6 +108,7 @@ public class Battle : MonoBehaviour {
       if (m.currentInitiative > bestInit) {
         bestMons = new List<Monster>();
         bestMons.Add(m);
+        bestInit = m.currentInitiative;
       }
     }
 
