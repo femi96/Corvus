@@ -32,7 +32,7 @@ public class Monster {
   // Battle stats
   public int currentInitiative = 0;
 
-  public Monster(string name, int species) {
+  public Monster(string name = "None", int species = 0) {
     this.name = name;
     this.speciesID = species;
 

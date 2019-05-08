@@ -12,10 +12,42 @@ public class Battle : MonoBehaviour {
   void Start() {
     sideLeft = new Monster[3];
     sideRight = new Monster[3];
+
+    sideLeft[0] = new Monster();
+    sideRight[1] = new Monster();
+    sideRight[2] = new Monster();
+
+    GenerateGameObjects();
   }
 
   void Update() {}
 
+  public GameObject tilePrefab;
+  public GameObject monPrefab;
+
+  public void GenerateGameObjects() {
+
+    Vector3 spacing = new Vector3(1.2f, 0, 0);
+    Vector3 monHeight = Vector3.up;
+    GameObject go;
+
+    for (int i = 0; i < 3; i++) {
+      go = Instantiate(tilePrefab, transform);
+      go.transform.position = spacing * (i + 1);
+      go = Instantiate(tilePrefab, transform);
+      go.transform.position = spacing * (i + 1) * -1;
+
+      if (sideRight[i] != null) {
+        go = Instantiate(monPrefab, transform);
+        go.transform.position = spacing * (i + 1) + monHeight;
+      }
+
+      if (sideLeft[i] != null) {
+        go = Instantiate(monPrefab, transform);
+        go.transform.position = spacing * (i + 1) * -1 + monHeight;
+      }
+    }
+  }
 
   public void ActionWait() {
     GetNextTurn();
