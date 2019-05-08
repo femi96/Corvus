@@ -572,9 +572,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80718c78b01752d419e5a331f7c3ad71, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  colors: []
   tilePrefab: {fileID: 1528699472927652, guid: 88930a4b703bd734bb81277ff092dc86, type: 2}
   monPrefab: {fileID: 1955436001340474, guid: 9ecbc9b8c67091844943933ccef70cb2, type: 2}
-  monsterID: 0
+  cursorPrefab: {fileID: 1611048087484258, guid: cfe430fcc3121764895ab8c2d4958525,
+    type: 2}
 --- !u!4 &1152692075
 Transform:
   m_ObjectHideFlags: 0
