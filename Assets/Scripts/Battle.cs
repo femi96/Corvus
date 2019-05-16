@@ -122,7 +122,8 @@ public class Battle : MonoBehaviour {
     int pos = loc % 3;
     int sign = 2 * side - 1;
     Vector3 spacing = new Vector3(1.2f, 0, 0);
-    return spacing * (pos + 1) * sign;
+    Vector3 depth = new Vector3(0, 0.15f, 1f);
+    return spacing * (pos + 1) * sign + depth * (pos - 0);
   }
 
   private Monster LocationToMonster(int loc) {
