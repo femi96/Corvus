@@ -113,10 +113,23 @@ public class Battle : MonoBehaviour {
 
   public void ActionUseMove(int moveIndex) {
     Move mov = currentMonster.moves[moveIndex];
-    Monster targetMonster = parties[1 - currentMonster.partySide].board[currentMonster.boardPos];
 
-    if (mov != null)
-      mov.Act(currentMonster, targetMonster);
+    if (mov != null) {
+      if (mov.GetTargetType() == TargetType.Single) {
+        Monster targetMonster = parties[1 - currentMonster.partySide].board[currentMonster.boardPos];
+        mov.Act(currentMonster, targetMonster);
+      }
+
+      if (mov.GetTargetType() == TargetType.Multi) {
+        Monster[] targetMonsters = new Monster[3];
+
+        for (int i = 0; i < 3; i++) {
+          targetMonsters[i] = parties[1 - currentMonster.partySide].board[i];
+        }
+
+        mov.Act(currentMonster, targetMonsters);
+      }
+    }
 
     UpdateMonsterRep();
     GetNextTurn();
