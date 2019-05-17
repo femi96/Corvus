@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Battle : MonoBehaviour {
 
@@ -201,6 +202,24 @@ public class Battle : MonoBehaviour {
       }
   }
 
+  [Header("UI Pointers")]
+  public GameObject allUI;
+  public GameObject[] movesUI;
+  public Text[] movesTextUI;
+
+  private void UpdateUI() {
+    allUI.SetActive(debugControlEnemies || currentMonster.partySide == 0);
+
+    for (int i = 0; i < 4; i++) {
+      Move move = currentMonster.moves[i];
+      movesUI[i].SetActive(move != null);
+
+      if (move != null) {
+        movesTextUI[i].text = move.GetName();
+      }
+    }
+  }
+
   private Vector3 ContextToWorld(Monster mon) {
     return ContextToWorld(mon.partySide, mon.boardPos, true);
   }
@@ -226,6 +245,7 @@ public class Battle : MonoBehaviour {
   private void GetNextTurn() {
     currentMonster = GetNextMonster();
     cursorGo.transform.position = ContextToWorld(currentMonster) + Vector3.up;
+    UpdateUI();
   }
 
   private Monster GetNextMonster() {

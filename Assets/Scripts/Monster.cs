@@ -8,7 +8,7 @@ public enum EType {
 
 public class Monster {
   /* Public variables may be read but should not be written
-  	from outside of Monster, with marked exceptions*/
+    from outside of Monster, with marked exceptions*/
 
   // Biographic info
   public string name;
@@ -63,7 +63,16 @@ public class Monster {
     CalculateDerivedStats();
 
     moves = new Move[4];
-    moves[0] = new Move();
+    moves[0] = new MoveTackle();
+
+    if (Random.Range(0f, 1f) < 0.5f)
+      moves[1] = new MoveScratch();
+
+    if (Random.Range(0f, 1f) < 0.5f)
+      moves[2] = new MoveRuin();
+
+    if (Random.Range(0f, 1f) < 0.25f)
+      moves[3] = new MoveSweep();
 
     currentHealth = (int)(maxHealth * Random.Range(0.5f, 1f));
   }

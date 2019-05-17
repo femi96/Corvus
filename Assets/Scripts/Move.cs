@@ -6,7 +6,7 @@ public enum TargetType {
   Single, Multi
 }
 
-public class Move {
+public abstract class Move {
 
   public void Act(Monster user, Monster target) {
     Act(user, new Monster[] { target });
@@ -23,21 +23,21 @@ public class Move {
     return GetScale(user) * GetPower();
   }
 
-  /* Abstract functions for specific overwrites */
+  /* Abstract/virtual functions for specific overwrites */
 
-  public string Name() {
+  public virtual string GetName() {
     return "NULL";
   }
 
-  public float GetPower() {
+  public virtual float GetPower() {
     return 2.0f;
   }
 
-  public float GetScale(Monster user) {
+  public virtual float GetScale(Monster user) {
     return user.str;
   }
 
-  public TargetType GetTargetType() {
+  public virtual TargetType GetTargetType() {
     return TargetType.Single;
   }
 }
