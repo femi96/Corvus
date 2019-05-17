@@ -32,7 +32,9 @@ public class Monster {
 
   // Battle stats
   public int currentInitiative = 0;
-  public int location = 0;
+  // Context for knowing its board position & gameObject body
+  public int partySide = 0;
+  public int boardPos = 0;
   public GameObject body;
 
   public Monster(string name = "None", int species = 0) {

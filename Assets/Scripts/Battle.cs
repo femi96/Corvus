@@ -4,22 +4,20 @@ using UnityEngine;
 
 public class Battle : MonoBehaviour {
 
-  // 0 front, 1 middle, 2 back
-  public Monster[] sideLeft;
-  public Monster[] sideRight;
+  public Party[] parties;
   public List<Monster> monsters;
   public Monster currentMonster;
 
   public Color[] colors;
 
   void Start() {
-    sideLeft = new Monster[3];
-    sideRight = new Monster[3];
+    parties = new Party[2];
 
-    sideLeft[0] = new Monster();
-    sideRight[1] = new Monster();
-    sideRight[2] = new Monster();
-    UpdateMonsterLocations();
+    Monster[] p0 = new Monster[] { new Monster() };
+    Monster[] p1 = new Monster[] { new Monster(), new Monster() };
+    parties[0] = new Party(p0);
+    parties[1] = new Party(p1);
+
 
     colors = new Color[10];
 
@@ -27,6 +25,7 @@ public class Battle : MonoBehaviour {
       colors[i] = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
     }
 
+    UpdateMonsterContext();
     GenerateGameObjects();
     GetNextTurn();
   }
@@ -38,24 +37,23 @@ public class Battle : MonoBehaviour {
   public GameObject cursorPrefab;
   private GameObject cursorGo;
 
-  private Vector3 monHeight = Vector3.up;
-
   private void GenerateGameObjects() {
     GameObject go;
 
-    for (int i = 0; i < 6; i++) {
-      go = Instantiate(tilePrefab, transform);
-      go.transform.position = LocationToWorld(i);
+    for (int j = 0; j < 2; j++)
+      for (int i = 0; i < 3; i++) {
+        go = Instantiate(tilePrefab, transform);
+        go.transform.position = ContextToWorld(j, i);
 
-      Monster m = LocationToMonster(i);
+        Monster m = parties[j].board[i];
 
-      if (m != null) {
-        go = Instantiate(monPrefab, transform);
-        go.transform.position = LocationToWorld(i) + monHeight;
-        m.body = go;
-        go.GetComponent<Renderer>().material.SetColor("_Color", colors[m.monID]);
+        if (m != null) {
+          go = Instantiate(monPrefab, transform);
+          go.transform.position = ContextToWorld(m);
+          m.body = go;
+          go.GetComponent<Renderer>().material.SetColor("_Color", colors[m.monID]);
+        }
       }
-    }
 
     cursorGo = Instantiate(cursorPrefab, transform);
   }
@@ -65,14 +63,15 @@ public class Battle : MonoBehaviour {
   }
 
   public void ActionMove(int dir) {
-    MoveMonster(currentMonster.location, dir);
+    MoveMonster(currentMonster, dir);
     GetNextTurn();
   }
 
-  private void MoveMonster(int loc, int dir) {
-    int side = loc / 3; // 0 is left, 1 is right
-    int pos = loc % 3;
+  private void MoveMonster(Monster mon, int dir) {
+    MoveMonster(mon.partySide, mon.boardPos, dir);
+  }
 
+  private void MoveMonster(int side, int pos, int dir) {
     Monster movingMon;
 
     while (dir != 0) {
@@ -83,57 +82,44 @@ public class Battle : MonoBehaviour {
 
       int i = (int)Mathf.Sign(dir);
 
-      if (side == 0) {
-        movingMon = sideLeft[pos];
-        sideLeft[pos] = sideLeft[pos + i];
-        sideLeft[pos + i] = movingMon;
-        pos += i;
-        dir -= i;
-      } else {
-        movingMon = sideRight[pos];
-        sideRight[pos] = sideRight[pos + i];
-        sideRight[pos + i] = movingMon;
-        pos += i;
-        dir -= i;
-      }
+      movingMon = parties[side].board[pos];
+      parties[side].board[pos] = parties[side].board[pos + i];
+      parties[side].board[pos + i] = movingMon;
+      pos += i;
+      dir -= i;
 
-      UpdateMonsterLocations();
+      UpdateMonsterContext();
 
       foreach (Monster m in monsters) {
-        m.body.transform.position = LocationToWorld(m.location) + monHeight;
+        m.body.transform.position = ContextToWorld(m);
       }
     }
   }
 
-  private void UpdateMonsterLocations() {
-    for (int i = 0; i < 3; i++) {
-      if (sideLeft[i] != null) {
-        sideLeft[i].location = i;
+  private void UpdateMonsterContext() {
+    for (int j = 0; j < 2; j++)
+      for (int i = 0; i < 3; i++) {
+        if (parties[j].board[i] != null) {
+          parties[j].board[i].partySide = j;
+          parties[j].board[i].boardPos = i;
+        }
       }
-
-      if (sideRight[i] != null) {
-        sideRight[i].location = 3 + i;
-      }
-    }
   }
 
-  private Vector3 LocationToWorld(int loc) {
-    int side = loc / 3; // 0 is left, 1 is right
-    int pos = loc % 3;
+  private Vector3 ContextToWorld(Monster mon) {
+    return ContextToWorld(mon.partySide, mon.boardPos, true);
+  }
+
+  private Vector3 ContextToWorld(int side, int pos, bool isMonster = false) {
     int sign = 2 * side - 1;
     Vector3 spacing = new Vector3(1.2f, 0, 0);
     Vector3 depth = new Vector3(0, 0.15f, 1f);
-    return spacing * (pos + 1) * sign + depth * (pos - 0);
-  }
+    Vector3 output = (spacing * (pos + 1) * sign) + (depth * (pos - 0));
 
-  private Monster LocationToMonster(int loc) {
-    int side = loc / 3; // 0 is left, 1 is right
-    int pos = loc % 3;
+    if (isMonster)
+      output += 0.5f * Vector3.up;
 
-    if (side == 0)
-      return sideLeft[pos];
-
-    return sideRight[pos];
+    return output;
   }
 
   private void ResetInitiative() {
@@ -144,7 +130,7 @@ public class Battle : MonoBehaviour {
 
   private void GetNextTurn() {
     currentMonster = GetNextMonster();
-    cursorGo.transform.position = LocationToWorld(currentMonster.location) + monHeight * 2;
+    cursorGo.transform.position = ContextToWorld(currentMonster) + Vector3.up;
   }
 
   private Monster GetNextMonster() {
@@ -177,14 +163,11 @@ public class Battle : MonoBehaviour {
   private void UpdateMonsters() {
     monsters = new List<Monster>();
 
-    foreach (Monster m in sideLeft) {
-      if (m != null)
-        monsters.Add(m);
-    }
-
-    foreach (Monster m in sideRight) {
-      if (m != null)
-        monsters.Add(m);
+    foreach (Party p in parties) {
+      foreach (Monster m in p.board) {
+        if (m != null)
+          monsters.Add(m);
+      }
     }
   }
 }
