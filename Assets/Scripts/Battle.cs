@@ -185,7 +185,7 @@ public class Battle : MonoBehaviour {
     int sign = 2 * side - 1;
     Vector3 spacing = new Vector3(1.2f, 0, 0);
     Vector3 depth = new Vector3(0, 0.15f, 1f);
-    Vector3 output = (spacing * (pos + 1) * sign) + (depth * (pos - 0));
+    Vector3 output = (spacing * (pos + 1) * sign) + (depth * (2 - pos));
 
     if (isMonster)
       output += 0.5f * Vector3.up;
