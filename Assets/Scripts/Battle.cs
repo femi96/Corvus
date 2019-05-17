@@ -10,6 +10,9 @@ public class Battle : MonoBehaviour {
 
   public Color[] colors;
 
+  [Header("Debug Toggles")]
+  public bool controlEnemies = false;
+
   void Start() {
     parties = new Party[2];
 
@@ -30,8 +33,12 @@ public class Battle : MonoBehaviour {
     GetNextTurn();
   }
 
-  void Update() {}
+  void Update() {
+    if (!controlEnemies && currentMonster.partySide != 0)
+      ActionWait();
+  }
 
+  [Header("Prefab Pointers")]
   public GameObject tilePrefab;
   public GameObject monPrefab;
   public GameObject cursorPrefab;
