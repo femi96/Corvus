@@ -7,6 +7,8 @@ public enum EType {
 }
 
 public class Monster {
+  /* Public variables may be read but should not be written
+  	from outside of Monster, with marked exceptions*/
 
   // Biographic info
   public string name;
@@ -30,10 +32,16 @@ public class Monster {
   public int mentalResist;
   public int normalResist;
 
+  // Moves
+  public Move[] moves;
+
   // Battle stats
+  /* Battle script may set these variables */
   public int currentInitiative = 0;
   public int currentHealth = 0;
+
   // Context for knowing its board position & gameObject body
+  /* Battle script may set these variables */
   public int partySide = 0;
   public int boardPos = 0;
   public GameObject body;
@@ -54,6 +62,9 @@ public class Monster {
 
     CalculateDerivedStats();
 
+    moves = new Move[4];
+    moves[0] = new Move();
+
     currentHealth = (int)(maxHealth * Random.Range(0.5f, 1f));
   }
 
@@ -64,5 +75,10 @@ public class Monster {
     vitalResist = vit;
     mentalResist = wis;
     normalResist = wil;
+  }
+
+  public void DealDamage(float damage) {
+    currentHealth -= (int)Mathf.Max(damage, 1f);
+    currentHealth = Mathf.Max(currentHealth, 0);
   }
 }

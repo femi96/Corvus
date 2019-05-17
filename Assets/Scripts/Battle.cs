@@ -111,6 +111,17 @@ public class Battle : MonoBehaviour {
     GetNextTurn();
   }
 
+  public void ActionUseMove(int moveIndex) {
+    Move mov = currentMonster.moves[moveIndex];
+    Monster targetMonster = parties[1 - currentMonster.partySide].board[currentMonster.boardPos];
+
+    if (mov != null)
+      mov.Act(currentMonster, targetMonster);
+
+    UpdateMonsterRep();
+    GetNextTurn();
+  }
+
   private void MoveMonster(Monster mon, int dir) {
     MoveMonster(mon.partySide, mon.boardPos, dir);
   }
