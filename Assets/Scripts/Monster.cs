@@ -32,10 +32,12 @@ public class Monster {
 
   // Battle stats
   public int currentInitiative = 0;
+  public int currentHealth = 0;
   // Context for knowing its board position & gameObject body
   public int partySide = 0;
   public int boardPos = 0;
   public GameObject body;
+  public GameObject healthBar;
 
   public Monster(string name = "None", int species = 0) {
     this.name = name;
@@ -50,10 +52,12 @@ public class Monster {
     vit = 5;
     wil = 5;
 
-    CalculateCurrentStats();
+    CalculateDerivedStats();
+
+    currentHealth = (int)(maxHealth * Random.Range(0.5f, 1f));
   }
 
-  private void CalculateCurrentStats() {
+  private void CalculateDerivedStats() {
     maxHealth = 20 + (vit * 3) + str;
     initiative = 0 + rea;
     evasion = 0 + agi + rea;

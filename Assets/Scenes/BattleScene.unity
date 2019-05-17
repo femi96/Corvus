@@ -748,10 +748,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   colors: []
+  controlEnemies: 0
   tilePrefab: {fileID: 1528699472927652, guid: 88930a4b703bd734bb81277ff092dc86, type: 2}
   monPrefab: {fileID: 1955436001340474, guid: 9ecbc9b8c67091844943933ccef70cb2, type: 2}
   cursorPrefab: {fileID: 1611048087484258, guid: cfe430fcc3121764895ab8c2d4958525,
     type: 2}
+  hbPrefab: {fileID: 1306215826727030, guid: 5860ad7eaeabed44ca2788017afc6ac1, type: 2}
 --- !u!4 &1152692075
 Transform:
   m_ObjectHideFlags: 0

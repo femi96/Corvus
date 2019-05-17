@@ -11,12 +11,15 @@ public class Battle : MonoBehaviour {
   public Color[] colors;
 
   [Header("Debug Toggles")]
-  public bool controlEnemies = false;
+  public bool debugControlEnemies = false;
+  public bool debugIncrementHealth = false;
+  public bool debugDecrementHealth = false;
+  private float incrementHealthTick = 0;
 
   void Start() {
     parties = new Party[2];
 
-    Monster[] p0 = new Monster[] { new Monster() };
+    Monster[] p0 = new Monster[] { new Monster(), new Monster(), new Monster(), new Monster(), new Monster() };
     Monster[] p1 = new Monster[] { new Monster(), new Monster() };
     parties[0] = new Party(p0);
     parties[1] = new Party(p1);
@@ -34,7 +37,35 @@ public class Battle : MonoBehaviour {
   }
 
   void Update() {
-    if (!controlEnemies && currentMonster.partySide != 0)
+
+    /* Debug for testing health bar by varying over time */
+    if (debugIncrementHealth || debugDecrementHealth) {
+      incrementHealthTick += Time.deltaTime / 0.1f;
+
+      if (incrementHealthTick > 1f) {
+        incrementHealthTick -= 1f;
+        int i = 1;
+
+        if (debugDecrementHealth)
+          i = -1;
+
+        foreach (Monster m in monsters) {
+          if (debugIncrementHealth && !debugDecrementHealth && m.currentHealth == m.maxHealth)
+            m.currentHealth = 0;
+          else if (debugDecrementHealth && m.currentHealth == 0)
+            m.currentHealth = m.maxHealth;
+          else
+            m.currentHealth += i * Mathf.CeilToInt(0.01f * m.maxHealth);
+
+          m.currentHealth = Mathf.Clamp(m.currentHealth, 0, m.maxHealth);
+        }
+
+        UpdateMonsterRep();
+      }
+    }
+
+    /* Debug for disabling enemy AI */
+    if (!debugControlEnemies && currentMonster.partySide != 0)
       ActionWait();
   }
 
@@ -42,6 +73,7 @@ public class Battle : MonoBehaviour {
   public GameObject tilePrefab;
   public GameObject monPrefab;
   public GameObject cursorPrefab;
+  public GameObject hbPrefab;
   private GameObject cursorGo;
 
   private void GenerateGameObjects() {
@@ -56,12 +88,17 @@ public class Battle : MonoBehaviour {
 
         if (m != null) {
           go = Instantiate(monPrefab, transform);
-          go.transform.position = ContextToWorld(m);
           m.body = go;
           go.GetComponent<Renderer>().material.SetColor("_Color", colors[m.monID]);
+
+          go = Instantiate(hbPrefab, transform);
+          m.healthBar = go;
+          // go.GetComponent<Renderer>().material.SetColor("_Color", colors[m.monID]);
         }
+
       }
 
+    UpdateMonsterRep();
     cursorGo = Instantiate(cursorPrefab, transform);
   }
 
@@ -96,10 +133,37 @@ public class Battle : MonoBehaviour {
       dir -= i;
 
       UpdateMonsterContext();
+      UpdateMonsterRep();
+    }
+  }
 
-      foreach (Monster m in monsters) {
-        m.body.transform.position = ContextToWorld(m);
-      }
+  private void UpdateMonsterRep() {
+    /* Function for instant updates of monsters visual representations
+      Eventually, these updates will be changed to act over time
+      */
+
+    UpdateMonsters();
+
+    Color g = new Color(0.25f, 1f, 0.25f);
+    Color y = new Color(1f, 1f, 0.25f);
+    Color r = new Color(1f, 0.25f, 0.25f);
+
+    foreach (Monster m in monsters) {
+      m.body.transform.position = ContextToWorld(m);
+
+      float hR = Mathf.Max(m.currentHealth * 1f / m.maxHealth, 0.001f);
+      /* Health bar colors
+        G 100% to 60%
+        Y 50% to 20%
+        R 10% to 0%
+        */
+
+      Color hbColor = Mathf.Clamp((hR - 0.5f) / 0.1f, 0f, 1f) * g +
+                      Mathf.Clamp((0.25f - Mathf.Abs(0.35f - hR)) / 0.1f, 0f, 1f) * y +
+                      Mathf.Clamp((0.2f - hR) / 0.1f, 0f, 1f) * r;
+      m.healthBar.transform.position = ContextToWorld(m) + 0.8f * Vector3.up;
+      m.healthBar.transform.localScale = new Vector3(hR, 0.2f, 0.2f);
+      m.healthBar.GetComponent<Renderer>().material.SetColor("_Color", hbColor);
     }
   }
 
