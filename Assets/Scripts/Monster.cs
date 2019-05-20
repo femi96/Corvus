@@ -50,7 +50,7 @@ public class Monster {
   public Monster(string name = "None", int species = 0) {
     this.name = name;
     this.speciesID = species;
-    this.monID = Random.Range(0, 10);
+    this.monID = Random.Range(0, 100);
 
     type = EType.Normal;
     str = 5;

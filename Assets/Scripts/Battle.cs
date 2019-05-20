@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -20,15 +21,15 @@ public class Battle : MonoBehaviour {
   void Start() {
     parties = new Party[2];
 
-    Monster[] p0 = new Monster[] { new Monster(), new Monster(), new Monster(), new Monster(), new Monster() };
+    Monster[] p0 = new Monster[] { new Monster("A"), new Monster("B"), new Monster("C"), new Monster("D"), new Monster("E") };
     Monster[] p1 = new Monster[] { new Monster(), new Monster() };
     parties[0] = new Party(p0);
     parties[1] = new Party(p1);
 
 
-    colors = new Color[10];
+    colors = new Color[100];
 
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 100; i++) {
       colors[i] = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
     }
 
@@ -112,6 +113,11 @@ public class Battle : MonoBehaviour {
     GetNextTurn();
   }
 
+  public void ActionSwap(int newMon) {
+    SwapMonster(currentMonster, newMon);
+    GetNextTurn();
+  }
+
   public void ActionUseMove(int moveIndex) {
     Move mov = currentMonster.moves[moveIndex];
 
@@ -162,6 +168,33 @@ public class Battle : MonoBehaviour {
     }
   }
 
+  private void SwapMonster(Monster oldMon, int newMon) {
+
+    Party party = parties[oldMon.partySide];
+    Monster swappingMon = party.members[newMon];
+
+    if (swappingMon == null || party.board.Contains(swappingMon))
+      return;
+
+    // Old mon objects
+    Destroy(oldMon.body);
+    Destroy(oldMon.healthBar);
+
+    // Swap in party
+    party.board[oldMon.boardPos] = swappingMon;
+
+    // New mon objects
+    GameObject go;
+    go = Instantiate(monPrefab, transform);
+    swappingMon.body = go;
+    go.GetComponent<Renderer>().material.SetColor("_Color", colors[swappingMon.monID]);
+    go = Instantiate(hbPrefab, transform);
+    swappingMon.healthBar = go;
+
+    UpdateMonsterContext();
+    UpdateMonsterRep();
+  }
+
   private void UpdateMonsterRep() {
     /* Function for instant updates of monsters visual representations
       Eventually, these updates will be changed to act over time
@@ -206,6 +239,8 @@ public class Battle : MonoBehaviour {
   public GameObject allUI;
   public GameObject[] movesUI;
   public Text[] movesTextUI;
+  public GameObject[] swapUI;
+  public Text[] swapTextUI;
 
   private void UpdateUI() {
     allUI.SetActive(debugControlEnemies || currentMonster.partySide == 0);
@@ -216,6 +251,21 @@ public class Battle : MonoBehaviour {
 
       if (move != null) {
         movesTextUI[i].text = move.GetName();
+      }
+    }
+
+    int j = 0;
+    Party party = parties[currentMonster.partySide];
+
+    foreach (GameObject s in swapUI) { s.SetActive(false); }
+
+    foreach (Monster m in party.members) {
+      if (m != null && !party.board.Contains(m)) {
+        swapUI[j].SetActive(true);
+        swapTextUI[j].text = m.name;
+        swapUI[j].GetComponent<Button>().onClick.RemoveAllListeners();
+        swapUI[j].GetComponent<Button>().onClick.AddListener(() => ActionSwap(System.Array.IndexOf(party.members, m)));
+        j += 1;
       }
     }
   }
