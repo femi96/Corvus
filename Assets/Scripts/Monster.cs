@@ -6,6 +6,10 @@ public enum EType {
   Normal, Fire
 }
 
+public enum Attr {
+  Str, Agi, Wis, Rea, Vit, Wil
+}
+
 public class Monster {
   /* Public variables may be read but should not be written
     from outside of Monster, with marked exceptions*/
@@ -17,12 +21,8 @@ public class Monster {
   public int monID;
 
   // Attributes
-  public int str;
-  public int agi;
-  public int wis;
-  public int rea;
-  public int vit;
-  public int wil;
+  public Dictionary<Attr, float> attrs;
+  public Dictionary<Attr, int> attrsBase;
 
   // Derives stats
   public int maxHealth;
@@ -39,6 +39,7 @@ public class Monster {
   /* Battle script may set these variables */
   public int currentInitiative = 0;
   public int currentHealth = 0;
+  public List<Status> statuses;
 
   // Context for knowing its board position & gameObject body
   /* Battle script may set these variables */
@@ -53,14 +54,14 @@ public class Monster {
     this.monID = Random.Range(0, 100);
 
     type = EType.Normal;
-    str = 5;
-    agi = 5;
-    wis = 5;
-    rea = 5;
-    vit = 5;
-    wil = 5;
+    attrs = new Dictionary<Attr, float>();
+    attrsBase = new Dictionary<Attr, int>();
+    statuses = new List<Status>();
 
-    CalculateDerivedStats();
+    foreach (Attr a in System.Enum.GetValues(typeof(Attr)))
+      attrsBase[a] = 5;
+
+    CalculateCurrentStats();
 
     moves = new Move[4];
     moves[0] = new MoveTackle();
@@ -77,13 +78,29 @@ public class Monster {
     currentHealth = (int)(maxHealth * Random.Range(0.5f, 1f));
   }
 
+  private void CalculateCurrentStats() {
+    foreach (Attr a in System.Enum.GetValues(typeof(Attr))) {
+      float val = attrsBase[a];
+
+      foreach (Status s in statuses) {
+        if (s.GetStatus() == StatusType.StatMod && s.GetStatAttr() == a) {
+          val *= s.GetStatMod();
+        }
+      }
+
+      attrs[a] = val;
+    }
+
+    CalculateDerivedStats();
+  }
+
   private void CalculateDerivedStats() {
-    maxHealth = 20 + (vit * 3) + str;
-    initiative = 0 + rea;
-    evasion = 0 + agi + rea;
-    vitalResist = vit;
-    mentalResist = wis;
-    normalResist = wil;
+    maxHealth = Mathf.RoundToInt(20 + (attrs[Attr.Vit] * 3) + attrs[Attr.Str]);
+    initiative = Mathf.RoundToInt(0 + attrs[Attr.Rea]);
+    evasion = Mathf.RoundToInt(0 + attrs[Attr.Agi] + attrs[Attr.Rea]);
+    vitalResist = Mathf.RoundToInt(attrs[Attr.Vit]);
+    mentalResist = Mathf.RoundToInt(attrs[Attr.Wis]);
+    normalResist = Mathf.RoundToInt(attrs[Attr.Wil]);
   }
 
   public void DealDamage(float damage) {

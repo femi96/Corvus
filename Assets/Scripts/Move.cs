@@ -34,7 +34,7 @@ public abstract class Move {
   }
 
   public virtual float GetScale(Monster user) {
-    return user.str;
+    return user.attrs[Attr.Str];
   }
 
   public virtual TargetType GetTargetType() {

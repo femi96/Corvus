@@ -13,7 +13,7 @@ public class MoveSweep : Move {
   }
 
   public override float GetScale(Monster user) {
-    return user.str;
+    return user.attrs[Attr.Str];
   }
 
   public override TargetType GetTargetType() {

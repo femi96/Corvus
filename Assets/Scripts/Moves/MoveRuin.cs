@@ -13,7 +13,7 @@ public class MoveRuin : Move {
   }
 
   public override float GetScale(Monster user) {
-    return user.wis;
+    return user.attrs[Attr.Wis];
   }
 
   public override TargetType GetTargetType() {

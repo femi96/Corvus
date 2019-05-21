@@ -13,7 +13,7 @@ public class MoveScratch : Move {
   }
 
   public override float GetScale(Monster user) {
-    return user.agi;
+    return user.attrs[Attr.Agi];
   }
 
   public override TargetType GetTargetType() {
