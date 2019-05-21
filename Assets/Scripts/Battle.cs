@@ -25,15 +25,12 @@ public class Battle : MonoBehaviour {
   private float incrementHealthTick = 0;
 
   void Start() {
-    battleState = BattleState.Ongoing;
+    BattleLoader.GenerateParties();
     parties = new Party[2];
+    parties[0] = BattleLoader.AllyParty;
+    parties[1] = BattleLoader.EnemyParty;
 
-    Monster[] p0 = new Monster[] { new Monster("AllyA"), new Monster("AllyB"), new Monster("AllyC"), new Monster("AllyD"), new Monster("AllyE") };
-    Monster[] p1 = new Monster[] { new Monster("EnemyA"), new Monster("EnemyB") };
-    parties[0] = new Party(p0);
-    parties[1] = new Party(p1);
-
-
+    battleState = BattleState.Ongoing;
     colors = new Color[100];
 
     for (int i = 0; i < 100; i++) {
