@@ -23,6 +23,7 @@ public class Battle : MonoBehaviour {
   public bool debugIncrementHealth = false;
   public bool debugDecrementHealth = false;
   private float incrementHealthTick = 0;
+  private float enemyAIDelay = 0;
 
   void Start() {
     BattleLoader.GenerateParties();
@@ -71,8 +72,23 @@ public class Battle : MonoBehaviour {
     }
 
     /* Debug for disabling enemy AI */
-    if (!debugControlEnemies && currentMonster.partySide != 0)
-      ActionWait();
+    if (!debugControlEnemies && currentMonster.partySide != 0) {
+      enemyAIDelay += Time.deltaTime;
+
+      if (enemyAIDelay >= 1.5f) {
+        enemyAIDelay -= 1.5f;
+
+        Move move = null;
+        int moveIndex = 0;
+
+        while (move == null) {
+          moveIndex = Random.Range(0, 4);
+          move = currentMonster.moves[moveIndex];
+        }
+
+        ActionUseMove(moveIndex);
+      }
+    }
   }
 
   [Header("Prefab Pointers")]
