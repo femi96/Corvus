@@ -21,8 +21,8 @@ public class Monster {
   public int monID;
 
   // Attributes
-  public Dictionary<Attr, float> attrs;
-  public Dictionary<Attr, int> attrsBase;
+  private Dictionary<Attr, float> attrs;
+  private Dictionary<Attr, int> attrsBase;
 
   // Derives stats
   public int maxHealth;
@@ -85,7 +85,7 @@ public class Monster {
 
       foreach (Status s in statuses) {
         if (s.GetStatus() == StatusType.StatMod && s.GetStatAttr() == a) {
-          stage = s.GetStatMod();
+          stage += s.GetStatMod();
         }
       }
 
@@ -105,11 +105,26 @@ public class Monster {
     normalResist = Mathf.RoundToInt(attrs[Attr.Wil]);
   }
 
-  public void DealDamage(float damage) {
-    damage = damage * Random.Range(0.80f, 1f);
-    damage = Mathf.Max(damage, 1f);
-    currentHealth -= Mathf.RoundToInt(damage);
+  public void DealDamage(float power) {
+    float calc = power * Random.Range(0.80f, 1f);
+    calc = Mathf.Max(calc, 1f);
+
+    int damage = Mathf.RoundToInt(calc);
+    currentHealth -= damage;
     currentHealth = Mathf.Max(currentHealth, 0);
-    Debug.Log(name + " takes " + Mathf.RoundToInt(damage) + " damage.");
+
+    Debug.Log(name + " takes " + damage + " damage.");
+  }
+
+  public float GetAttribute(Attr attr) {
+    return attrs[attr];
+  }
+
+  public void ApplyStatus(Status status) {
+    float temp1 = attrs[status.GetStatAttr()];
+    statuses.Add(status);
+    CalculateCurrentStats();
+    float temp2 = attrs[status.GetStatAttr()];
+    Debug.Log(name + " new status " + status.GetName() + ". " + status.GetStatAttr().ToString() + " change " + temp1 + " -> " + temp2 + ".");
   }
 }

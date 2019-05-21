@@ -129,19 +129,40 @@ public class Battle : MonoBehaviour {
     Move mov = currentMonster.moves[moveIndex];
 
     if (mov != null) {
-      if (mov.GetTargetType() == TargetType.Single) {
-        Monster targetMonster = parties[1 - currentMonster.partySide].board[currentMonster.boardPos];
-        mov.Act(currentMonster, targetMonster);
-      }
+      TargetType[] targetTypes = mov.GetTargetTypes();
 
-      if (mov.GetTargetType() == TargetType.Multi) {
-        Monster[] targetMonsters = new Monster[3];
+      int stage = 0;
 
-        for (int i = 0; i < 3; i++) {
-          targetMonsters[i] = parties[1 - currentMonster.partySide].board[i];
+      foreach (TargetType t in targetTypes) {
+        switch (t) {
+
+        case (TargetType.Single):
+          Monster targetMonster = parties[1 - currentMonster.partySide].board[currentMonster.boardPos];
+
+          if (targetMonster != null)
+            mov.Act(currentMonster, targetMonster, stage);
+
+          break;
+
+        case (TargetType.Multi):
+          List<Monster> targetMonsters = new List<Monster>();
+
+          for (int i = 0; i < 3; i++) {
+            Monster tMon = parties[1 - currentMonster.partySide].board[i];
+
+            if (tMon != null)
+              targetMonsters.Add(tMon);
+          }
+
+          mov.Act(currentMonster, targetMonsters.ToArray(), stage);
+          break;
+
+        case (TargetType.Self):
+          mov.Act(currentMonster, currentMonster, stage);
+          break;
         }
 
-        mov.Act(currentMonster, targetMonsters);
+        stage += 1;
       }
     }
 

@@ -3,41 +3,24 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public enum TargetType {
-  Single, Multi
+  Single, Multi, Self
 }
 
 public abstract class Move {
 
-  public void Act(Monster user, Monster target) {
-    Act(user, new Monster[] { target });
-  }
-
-  public void Act(Monster user, Monster[] targets) {
-    foreach (Monster target in targets) {
-      if (target != null)
-        target.DealDamage(GetDamage(user));
-    }
-  }
-
-  public float GetDamage(Monster user) {
-    return GetScale(user) * GetPower();
+  public void Act(Monster user, Monster target, int stage) {
+    Act(user, new Monster[] { target }, stage);
   }
 
   /* Abstract/virtual functions for specific overwrites */
 
-  public virtual string GetName() {
-    return "NULL";
-  }
+  public abstract string GetName();
 
-  public virtual float GetPower() {
-    return 2.0f;
-  }
+  public abstract void Act(Monster user, Monster[] targets, int stage);
 
-  public virtual float GetScale(Monster user) {
-    return user.attrs[Attr.Str];
-  }
+  public abstract float GetPower();
 
-  public virtual TargetType GetTargetType() {
-    return TargetType.Single;
-  }
+  public abstract float GetScale(Monster user);
+
+  public abstract TargetType[] GetTargetTypes();
 }

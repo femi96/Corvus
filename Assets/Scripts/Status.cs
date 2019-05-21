@@ -17,6 +17,10 @@ public class Status {
     this.mod = mod;
   }
 
+  public string GetName() {
+    return attr.ToString() + " " + mod;
+  }
+
   public StatusType GetStatus() {
     return StatusType.StatMod;
   }
