@@ -21,8 +21,8 @@ public class Status {
     return StatusType.StatMod;
   }
 
-  public float GetStatMod() {
-    return Mathf.Pow(2, mod);
+  public int GetStatMod() {
+    return mod;
   }
 
   public Attr GetStatAttr() {

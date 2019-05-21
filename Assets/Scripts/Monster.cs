@@ -81,13 +81,15 @@ public class Monster {
   private void CalculateCurrentStats() {
     foreach (Attr a in System.Enum.GetValues(typeof(Attr))) {
       float val = attrsBase[a];
+      int stage = 0;
 
       foreach (Status s in statuses) {
         if (s.GetStatus() == StatusType.StatMod && s.GetStatAttr() == a) {
-          val *= s.GetStatMod();
+          stage = s.GetStatMod();
         }
       }
 
+      val *= (2f + Mathf.Max(0, stage)) / (2f + Mathf.Max(0, -stage));
       attrs[a] = val;
     }
 
