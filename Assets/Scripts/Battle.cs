@@ -304,6 +304,9 @@ public class Battle : MonoBehaviour {
     List<Monster> bestMons = new List<Monster>();
 
     foreach (Monster m in monsters) {
+      if (m.currentHealth <= 0)
+        continue;
+
       if (m.currentInitiative == bestInit) {
         bestMons.Add(m);
       }
