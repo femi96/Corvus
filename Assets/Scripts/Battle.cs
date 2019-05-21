@@ -28,8 +28,8 @@ public class Battle : MonoBehaviour {
     battleState = BattleState.Ongoing;
     parties = new Party[2];
 
-    Monster[] p0 = new Monster[] { new Monster("A"), new Monster("B"), new Monster("C"), new Monster("D"), new Monster("E") };
-    Monster[] p1 = new Monster[] { new Monster(), new Monster() };
+    Monster[] p0 = new Monster[] { new Monster("AllyA"), new Monster("AllyB"), new Monster("AllyC"), new Monster("AllyD"), new Monster("AllyE") };
+    Monster[] p1 = new Monster[] { new Monster("EnemyA"), new Monster("EnemyB") };
     parties[0] = new Party(p0);
     parties[1] = new Party(p1);
 

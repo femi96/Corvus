@@ -104,7 +104,10 @@ public class Monster {
   }
 
   public void DealDamage(float damage) {
-    currentHealth -= (int)Mathf.Max(damage, 1f);
+    damage = damage * Random.Range(0.80f, 1f);
+    damage = Mathf.Max(damage, 1f);
+    currentHealth -= Mathf.RoundToInt(damage);
     currentHealth = Mathf.Max(currentHealth, 0);
+    Debug.Log(name + " takes " + Mathf.RoundToInt(damage) + " damage.");
   }
 }
