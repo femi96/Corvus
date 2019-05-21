@@ -4,7 +4,13 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
+public enum BattleState {
+  Ongoing, Win, Lose
+}
+
 public class Battle : MonoBehaviour {
+
+  public BattleState battleState;
 
   public Party[] parties;
   public List<Monster> monsters;
@@ -19,6 +25,7 @@ public class Battle : MonoBehaviour {
   private float incrementHealthTick = 0;
 
   void Start() {
+    battleState = BattleState.Ongoing;
     parties = new Party[2];
 
     Monster[] p0 = new Monster[] { new Monster("A"), new Monster("B"), new Monster("C"), new Monster("D"), new Monster("E") };
@@ -242,7 +249,17 @@ public class Battle : MonoBehaviour {
   public GameObject[] swapUI;
   public Text[] swapTextUI;
 
+  public GameObject winUI;
+  public GameObject loseUI;
+
   private void UpdateUI() {
+    if (battleState != BattleState.Ongoing) {
+      allUI.SetActive(false);
+      winUI.SetActive(battleState == BattleState.Win);
+      loseUI.SetActive(battleState == BattleState.Lose);
+      return;
+    }
+
     allUI.SetActive(debugControlEnemies || currentMonster.partySide == 0);
 
     for (int i = 0; i < 4; i++) {
@@ -293,8 +310,36 @@ public class Battle : MonoBehaviour {
   }
 
   private void GetNextTurn() {
-    currentMonster = GetNextMonster();
-    cursorGo.transform.position = ContextToWorld(currentMonster) + Vector3.up;
+    // Check if battle ended
+    bool allyLoss = true;
+    bool enemyLoss = true;
+
+    foreach (Monster m in parties[0].board) {
+      if (m != null && m.currentHealth > 0)
+        allyLoss = false;
+    }
+
+    foreach (Monster m in parties[1].board) {
+      if (m != null && m.currentHealth > 0)
+        enemyLoss = false;
+    }
+
+    if (allyLoss) {
+      // End loss
+      battleState = BattleState.Lose;
+    }
+
+    if (enemyLoss) {
+      // End win
+      battleState = BattleState.Win;
+    }
+
+    // Get next monster
+    if (battleState == BattleState.Ongoing) {
+      currentMonster = GetNextMonster();
+      cursorGo.transform.position = ContextToWorld(currentMonster) + Vector3.up;
+    }
+
     UpdateUI();
   }
 
