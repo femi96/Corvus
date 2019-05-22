@@ -26,10 +26,10 @@ public class Battle : MonoBehaviour {
   private float enemyAIDelay = 0;
 
   void Start() {
-    BattleLoader.GenerateParties();
     parties = new Party[2];
     parties[0] = BattleLoader.AllyParty;
     parties[1] = BattleLoader.EnemyParty;
+    ResetMonstersForBattle();
 
     battleState = BattleState.Ongoing;
     colors = new Color[100];
@@ -41,6 +41,17 @@ public class Battle : MonoBehaviour {
     UpdateMonsterContext();
     GenerateGameObjects();
     GetNextTurn();
+  }
+
+  public void ResetMonstersForBattle() {
+
+    for (int j = 0; j < 2; j++)
+      for (int i = 0; i < 6; i++) {
+        Monster m = parties[j].members[i];
+
+        if (m != null)
+          m.ResetForBattle();
+      }
   }
 
   void Update() {
@@ -72,7 +83,7 @@ public class Battle : MonoBehaviour {
     }
 
     /* Debug for disabling enemy AI */
-    if (!debugControlEnemies && battleState != BattleState.Ongoing && currentMonster.partySide != 0) {
+    if (!debugControlEnemies && battleState == BattleState.Ongoing && currentMonster.partySide != 0) {
       enemyAIDelay += Time.deltaTime;
 
       if (enemyAIDelay >= 1.5f) {

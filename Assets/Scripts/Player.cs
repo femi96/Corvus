@@ -2,17 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour {
+public class Player {
 
-  // Use this for initialization
-  void Start() {
+  public Party party;
 
+  public Player() {
+    GenerateParty();
   }
 
-  // Update is called once per frame
-  void Update() {
+  private void GenerateParty() {
+    Monster[] p = new Monster[6];
 
+    for (int i = 0; i < 6; i += 1) {
+      p[i] = new Monster("PlayerMember" + i);
+    }
+
+    party = new Party(p);
   }
-
-  start battle
 }

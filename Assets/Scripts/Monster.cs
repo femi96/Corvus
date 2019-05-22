@@ -105,6 +105,12 @@ public class Monster {
     normalResist = Mathf.RoundToInt(attrs[Attr.Wil]);
   }
 
+  public void ResetForBattle() {
+    currentInitiative = 0;
+    statuses = new List<Status>();
+    CalculateCurrentStats();
+  }
+
   public void DealDamage(float power) {
     float calc = power * Random.Range(0.80f, 1f);
     calc = Mathf.Max(calc, 1f);
