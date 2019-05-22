@@ -72,7 +72,7 @@ public class Battle : MonoBehaviour {
     }
 
     /* Debug for disabling enemy AI */
-    if (!debugControlEnemies && currentMonster.partySide != 0) {
+    if (!debugControlEnemies && battleState != BattleState.Ongoing && currentMonster.partySide != 0) {
       enemyAIDelay += Time.deltaTime;
 
       if (enemyAIDelay >= 1.5f) {
