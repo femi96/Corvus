@@ -12,6 +12,7 @@ public class Map : MonoBehaviour {
   [Header("UI Pointers")]
   public GameObject mapUI;
   public GameObject battleUI;
+  public GameObject restUI;
 
   public Text locationUI;
 
@@ -28,10 +29,19 @@ public class Map : MonoBehaviour {
       currentLocation.Visit(this);
   }
 
+  // Debug Set Locations
+
   public void DebugSetLocationBattle() {
     currentLocation = new LocationBattle();
     UpdateLocationUI();
   }
+
+  public void DebugSetLocationRest() {
+    currentLocation = new LocationRest();
+    UpdateLocationUI();
+  }
+
+  // Battle Events
 
   public void StartBattle(Party allyParty, Party enemyParty) {
     mapUI.SetActive(false);
@@ -48,5 +58,26 @@ public class Map : MonoBehaviour {
       currentLocation.Clear(1);
     else
       currentLocation.Clear(0);
+  }
+
+  // Rest Events
+
+  public void StartRest() {
+    mapUI.SetActive(false);
+    restUI.SetActive(true);
+  }
+
+  public void EndRest() {
+    mapUI.SetActive(true);
+    restUI.SetActive(false);
+  }
+
+  public void RestParty() {
+    foreach (Monster m in player.party.members) {
+      float f = 5.0f + m.GetAttribute(Attr.Vit);
+      m.Heal(f);
+    }
+
+    EndRest();
   }
 }

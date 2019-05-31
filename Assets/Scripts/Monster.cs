@@ -122,6 +122,14 @@ public class Monster {
     Debug.Log(name + " takes " + damage + " damage.");
   }
 
+  public void Heal(float amount) {
+    int delta = Mathf.RoundToInt(amount);
+    currentHealth += delta;
+    currentHealth = Mathf.Min(currentHealth, maxHealth);
+
+    Debug.Log(name + " healed by " + delta + ".");
+  }
+
   public float GetAttribute(Attr attr) {
     return attrs[attr];
   }
