@@ -5,12 +5,14 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public enum BattleState {
-  Ongoing, Win, Lose
+  Inactive, Ongoing, Win, Lose
 }
 
 public class Battle : MonoBehaviour {
 
-  public BattleState battleState;
+  public Map map;
+
+  public BattleState battleState = BattleState.Inactive;
 
   public Party[] parties;
   public List<Monster> monsters;
@@ -24,12 +26,15 @@ public class Battle : MonoBehaviour {
   public bool debugDecrementHealth = false;
   private float incrementHealthTick = 0;
   private float enemyAIDelay = 0;
+  private float endDelay = 0;
 
-  void Start() {
+  public void StartBattle(Party allyParty, Party enemyParty) {
     parties = new Party[2];
-    parties[0] = BattleLoader.AllyParty;
-    parties[1] = BattleLoader.EnemyParty;
+    parties[0] = allyParty;
+    parties[1] = enemyParty;
     ResetMonstersForBattle();
+
+    endDelay = 0;
 
     battleState = BattleState.Ongoing;
     colors = new Color[100];
@@ -41,6 +46,7 @@ public class Battle : MonoBehaviour {
     UpdateMonsterContext();
     GenerateGameObjects();
     GetNextTurn();
+    UpdateUI();
   }
 
   public void ResetMonstersForBattle() {
@@ -55,6 +61,20 @@ public class Battle : MonoBehaviour {
   }
 
   void Update() {
+
+    if (battleState == BattleState.Inactive)
+      return;
+
+    if (battleState == BattleState.Win || battleState == BattleState.Lose) {
+      endDelay += Time.deltaTime;
+
+      if (endDelay >= 5) {
+        map.EndBattle();
+        battleState = BattleState.Inactive;
+      }
+
+      return;
+    }
 
     /* Debug for testing health bar by varying over time */
     if (debugIncrementHealth || debugDecrementHealth) {
@@ -110,6 +130,9 @@ public class Battle : MonoBehaviour {
   private GameObject cursorGo;
 
   private void GenerateGameObjects() {
+    foreach (Transform child in transform)
+      Destroy(child.gameObject);
+
     GameObject go;
 
     for (int j = 0; j < 2; j++)
@@ -298,10 +321,11 @@ public class Battle : MonoBehaviour {
   public GameObject loseUI;
 
   private void UpdateUI() {
+    winUI.SetActive(battleState == BattleState.Win);
+    loseUI.SetActive(battleState == BattleState.Lose);
+
     if (battleState != BattleState.Ongoing) {
       allUI.SetActive(false);
-      winUI.SetActive(battleState == BattleState.Win);
-      loseUI.SetActive(battleState == BattleState.Lose);
       return;
     }
 

@@ -6,7 +6,7 @@ public abstract class Location {
 
   public abstract string GetName();
 
-  public abstract void Visit(Player player);
+  public abstract void Visit(Map map);
 
   public abstract void Clear(int result);
 }
