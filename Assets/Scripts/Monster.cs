@@ -35,18 +35,23 @@ public class Monster {
   // Moves
   public Move[] moves;
 
-  // Battle stats
   /* Battle script may set these variables */
+
+  // Battle stats
   public int currentInitiative = 0;
   public int currentHealth = 0;
   public List<Status> statuses;
 
+  // Monster actions
+  public ActionType actionType;
+  public int actionParamInt;
+
   // Context for knowing its board position & gameObject body
-  /* Battle script may set these variables */
   public int partySide = 0;
   public int boardPos = 0;
   public GameObject body;
   public GameObject healthBar;
+
 
   public Monster(string name = "None", int species = 0) {
     this.name = name;
@@ -75,7 +80,7 @@ public class Monster {
     if (Random.Range(0f, 1f) < 0.25f)
       moves[3] = new MoveSweep();
 
-    currentHealth = (int)(maxHealth * Random.Range(0.5f, 1f));
+    currentHealth = (int)maxHealth;
   }
 
   private void CalculateCurrentStats() {
@@ -119,7 +124,7 @@ public class Monster {
     currentHealth -= damage;
     currentHealth = Mathf.Max(currentHealth, 0);
 
-    Debug.Log(name + " takes " + damage + " damage.");
+    // Debug.Log(name + " takes " + damage + " damage.");
   }
 
   public void Heal(float amount) {
@@ -127,7 +132,7 @@ public class Monster {
     currentHealth += delta;
     currentHealth = Mathf.Min(currentHealth, maxHealth);
 
-    Debug.Log(name + " healed by " + delta + ".");
+    // Debug.Log(name + " healed by " + delta + ".");
   }
 
   public float GetAttribute(Attr attr) {
@@ -139,6 +144,6 @@ public class Monster {
     statuses.Add(status);
     CalculateCurrentStats();
     float temp2 = attrs[status.GetStatAttr()];
-    Debug.Log(name + " new status " + status.GetName() + ". " + status.GetStatAttr().ToString() + " change " + temp1 + " -> " + temp2 + ".");
+    // Debug.Log(name + " new status " + status.GetName() + ". " + status.GetStatAttr().ToString() + " change " + temp1 + " -> " + temp2 + ".");
   }
 }
