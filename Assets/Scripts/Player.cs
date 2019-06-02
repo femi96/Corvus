@@ -13,7 +13,7 @@ public class Player {
   private void GenerateParty() {
     Monster[] p = new Monster[6];
 
-    for (int i = 0; i < 6; i += 1) {
+    for (int i = 0; i < 5; i += 1) {
       p[i] = new Monster("PlayerMember" + i);
     }
 
