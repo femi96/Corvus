@@ -67,19 +67,30 @@ public class Map : MonoBehaviour {
       lls[i] = new List<Location>();
       layerCount = Mathf.RoundToInt(Random.Range(3f, 5f));
       float widthOffset = 0;
-      float heightOffset = 0;
+      float heightOffset = -Random.Range(0.75f, 1.5f) / (layerCount - 1f);
+      float widthOffsetNew = 0;
+      float heightOffsetNew = 0;
 
       for (int j = 0; j < layerCount; j++) {
+        bool toClose = true;
+        Location loc = new Location(-10f, -10f);
 
-        widthOffset = Mathf.Clamp(widthOffset + Random.Range(-0.5f, 0.5f), -0.5f, 0.5f);
-        heightOffset += Random.Range(0.5f, 1.5f) / (layerCount - 1f);
+        while (toClose) {
+          widthOffsetNew = Mathf.Clamp(widthOffset + Random.Range(-0.5f, 0.5f), -0.5f, 0.5f);
+          heightOffsetNew = heightOffset + Random.Range(0.75f, 1.5f) / (layerCount - 1f);
 
-        Location loc = new Location(
-          layerWidth * (i + 1 + widthOffset),
-          // layerWidth * (i + 1),
-          mapHeight * heightOffset);
-        // Random.Range(0f, mapHeight));
-        // mapHeight * j / (layerCount - 1f));
+          loc = new Location(
+            layerWidth * (i + 1 + widthOffsetNew),
+            mapHeight * heightOffsetNew);
+
+          toClose = false;
+
+          foreach (Location oldLoc in lls[i])
+            toClose = toClose || loc.GetDistance(oldLoc) < 2f;
+        }
+
+        widthOffset = widthOffsetNew;
+        heightOffset = heightOffsetNew;
         lls[i].Add(loc);
       }
 
@@ -167,6 +178,7 @@ public class Map : MonoBehaviour {
 
     for (int i = 0; i < 4; i++) {
       GenerateStepPullNodes(2.5f);
+      GenerateStepPushNodes(2f);
       GenerateStepPushNodes(2f);
     }
 
