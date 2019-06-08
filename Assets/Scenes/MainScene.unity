@@ -5032,6 +5032,10 @@ MonoBehaviour:
   debugPullMap: 0
   debugLocPrefab: {fileID: 1437014301624270, guid: 46c94b7823dff6a4db9b031e0711accf,
     type: 2}
+  debugLocRiskPrefab: {fileID: 1437014301624270, guid: ac7695e2b259b6c4fa6ba0ed4596ca50,
+    type: 2}
+  debugLocRewPrefab: {fileID: 1437014301624270, guid: 0c72451531c160a4287cba8452beb293,
+    type: 2}
   debugPathPrefab: {fileID: 1356683026287608, guid: 2c07dd98f0d953443b888c705a52e449,
     type: 2}
   mapUI: {fileID: 2010250960}

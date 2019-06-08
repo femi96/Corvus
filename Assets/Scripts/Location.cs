@@ -2,25 +2,104 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum LocationType {
+  None, Start, End, Battle, Rest
+}
+
 public class Location {
 
   public HashSet<Location> neighbors = new HashSet<Location>();
+  private string name = "None";
   private float x;
   private float y;
+  private LocationType type = LocationType.None;
+  public int cost = 0;
+  public int[] budgetTotal = new int[] { 0, 0 };
+  public int[] budget = new int[] { 0, 0 };
 
-  public Location() : this(0f, 0f) {
-  }
+  // Battle starts
+  private Party enemyParty;
+
+
+  public Location() : this(0f, 0f) {}
 
   public Location(float x, float y) {
     this.x = x;
     this.y = y;
   }
 
-  public virtual string GetName() { return "None"; }
 
-  public virtual void Visit(Map map) {}
 
-  public virtual void Clear(int result) {}
+  /* Location functionality */
+
+  public LocationType GetLocationType() { return type; }
+
+  public string GetName() { return name; }
+
+  public void Visit(Map map) {
+    switch (type) {
+    case LocationType.Battle:
+      map.StartBattle(map.player.party, enemyParty);
+      break;
+
+    case LocationType.Rest:
+      map.StartRest();
+      break;
+    }
+  }
+
+  public void Clear(int result) {
+    switch (type) {
+    case LocationType.Battle:
+
+      if (result == 0) {
+        // end run
+      } else {
+        // continue or reward
+      }
+
+      break;
+    }
+  }
+
+
+
+  /* Location type setting */
+
+  public void CreateStart() {
+    type = LocationType.Start;
+    name = "Start";
+  }
+
+  public void CreateEnd() {
+    type = LocationType.End;
+    name = "End";
+  }
+
+  public void CreateBattle() {
+    type = LocationType.Battle;
+    name = "Battle " + Random.Range(0, 1000);
+    GenerateEnemy();
+  }
+
+  private void GenerateEnemy() {
+    Monster[] p = new Monster[6];
+
+    for (int i = 0; i < 6; i += 1) {
+      p[i] = new Monster("Enemy" + i);
+    }
+
+    enemyParty = new Party(p);
+  }
+
+  public void CreateRest() {
+    type = LocationType.Rest;
+    name = "Rest " + Random.Range(0, 1000);
+  }
+
+
+
+  /* Map connectons */
 
   public void AddNeighbor(Location loc) {
     if (loc != this)
@@ -31,7 +110,7 @@ public class Location {
     neighbors = new HashSet<Location>();
   }
 
-  public void SetCoords(float x, float y) {
+  public void CreateCoords(float x, float y) {
     this.x = x;
     this.y = y;
   }

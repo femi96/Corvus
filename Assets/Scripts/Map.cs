@@ -22,21 +22,14 @@ public class Map : MonoBehaviour {
       debugReGenMap = false;
       GenerateMap();
     }
-
-    if (debugPushMap) {
-      debugPushMap = false;
-      GenerateStepPushNodes(2f);
-    }
-
-    if (debugPullMap) {
-      debugPullMap = false;
-      GenerateStepPullNodes(2.5f);
-    }
   }
 
 
 
   /* Location managements */
+
+  private int mapLayers = 6;
+  private List<Location>[] lls;
 
   public void VisitLocation() {
     if (currentLocation != null)
@@ -47,7 +40,6 @@ public class Map : MonoBehaviour {
 
     float mapWidth = 20f;
     float mapHeight = 10f;
-    int mapLayers = 6;
 
     List<Location> ls = new List<Location>();
 
@@ -59,7 +51,7 @@ public class Map : MonoBehaviour {
 
 
     // Generate location layers
-    List<Location>[] lls = new List<Location>[mapLayers];
+    lls = new List<Location>[mapLayers];
     int layerCount = 3;
     float layerWidth = mapWidth / (mapLayers + 1);
 
@@ -148,26 +140,27 @@ public class Map : MonoBehaviour {
       }
     }
 
-
     // Connect start
     for (int j = 0; j < lls[0].Count; j++) {
       start.AddNeighbor(lls[0][j]);
     }
-
 
     // Connect end
     for (int j = 0; j < lls[mapLayers - 1].Count; j++) {
       lls[mapLayers - 1][j].AddNeighbor(end);
     }
 
-
     // Add location layers to locations
     for (int i = 0; i < mapLayers; i++) {
       for (int j = 0; j < lls[i].Count; j++) {
+        lls[i][j].cost = 3;
+
+        if (i == 2 || i == 4 || i == 5)
+          lls[i][j].cost = 4;
+
         ls.Add(lls[i][j]);
       }
     }
-
 
     // Color locations by lands
     // Land A layer of nodes
@@ -182,6 +175,7 @@ public class Map : MonoBehaviour {
       GenerateStepPushNodes(2f);
     }
 
+    GenerateLocationTypes();
     DebugDisplayLocations();
   }
 
@@ -205,8 +199,6 @@ public class Map : MonoBehaviour {
         }
       }
     }
-
-    DebugDisplayLocations();
   }
 
   private void GenerateStepPushNodes(float pushRadius) {
@@ -228,8 +220,90 @@ public class Map : MonoBehaviour {
         }
       }
     }
+  }
 
-    DebugDisplayLocations();
+  private void GenerateLocationTypes() {
+    locations[0].CreateStart();
+    locations[1].CreateEnd();
+
+    int riskBudget = 18;
+    int rewardBudget = 6;
+    LocationAssignment(new int[] { riskBudget, rewardBudget }, locations[0]);
+  }
+
+  private int[] LocationAssignment(int[] budget, Location loc) {
+    // Recursive location assignment that takes available budget and returns budget used
+    // Debug.Log(loc.GetLocationType());
+
+    int[] usableBudget = new int[2];
+    int[] usedBudget = new int[2];
+    int[] childUsedBudget = new int[2];
+    int[] childAvailableBudget = new int[2];
+
+    for (int i = 0; i < budget.Length; i++)
+      childAvailableBudget[i] = budget[i];
+
+    // Skip if already reached
+    if (loc.GetLocationType() != LocationType.None && loc.GetLocationType() != LocationType.Start && loc.GetLocationType() != LocationType.End)
+      return loc.budgetTotal;
+
+    // Skip end node
+    if (loc.GetLocationType() == LocationType.End) {
+      loc.budget = new int[] { 0, 0 };
+      loc.budgetTotal = loc.budget;
+      return loc.budgetTotal;
+    }
+
+
+    // For neighbors
+    foreach (Location n in loc.neighbors) {
+      childUsedBudget = LocationAssignment(childAvailableBudget, n);
+      childAvailableBudget = childUsedBudget;
+    }
+
+    // Skip start node
+    if (loc.GetLocationType() == LocationType.Start) {
+      loc.budget = new int[] { 0, 0 };
+      loc.budgetTotal = childUsedBudget;
+      return loc.budgetTotal;
+    }
+
+
+    // Set current location
+    for (int i = 0; i < budget.Length; i++) {
+      usedBudget[i] = childUsedBudget[i];
+      usableBudget[i] = budget[i] - usedBudget[i];
+    }
+
+    int total = loc.cost;
+    int risk = 0;
+    int reward = 0;
+    Random.Range(Mathf.Max(3 - usableBudget[1], 0), Mathf.Min(usableBudget[0] + 1, 4));
+    Mathf.Max(3 - risk, 0);
+
+    for (int i = 0; i < total; i++) {
+      float rewardChance = usableBudget[1] / (0f + usableBudget[0] + usableBudget[1]);
+      Debug.Log(rewardChance);
+
+      if (Random.Range(0f, 1f) < rewardChance) {
+        if (reward < usableBudget[1])
+          reward += 1;
+        else if (risk < usableBudget[0])
+          risk += 1;
+      } else {
+        if (risk < usableBudget[0])
+          risk += 1;
+        else if (reward < usableBudget[1])
+          reward += 1;
+      }
+    }
+
+    usedBudget[0] += risk;
+    usedBudget[1] += reward;
+    loc.CreateBattle();
+    loc.budget = new int[] { risk, reward };
+    loc.budgetTotal = usedBudget;
+    return loc.budgetTotal;
   }
 
 
@@ -238,9 +312,9 @@ public class Map : MonoBehaviour {
 
   [Header("Debug Variables")]
   public bool debugReGenMap = false;
-  public bool debugPushMap = false;
-  public bool debugPullMap = false;
   public GameObject debugLocPrefab;
+  public GameObject debugLocRiskPrefab;
+  public GameObject debugLocRewPrefab;
   public GameObject debugPathPrefab;
 
   private void DebugDisplayLocations() {
@@ -248,8 +322,9 @@ public class Map : MonoBehaviour {
       Destroy(child.gameObject);
 
     foreach (Location loc in locations) {
-      GameObject go = Instantiate(debugLocPrefab, transform);
-      go.transform.position = new Vector3(loc.GetX(), loc.GetY(), 4);
+      GameObject go;
+      GameObject locGo = Instantiate(debugLocPrefab, transform);
+      locGo.transform.position = new Vector3(loc.GetX(), loc.GetY(), 4);
 
       foreach (Location n in loc.neighbors) {
         go = Instantiate(debugPathPrefab, transform);
@@ -257,16 +332,28 @@ public class Map : MonoBehaviour {
           new Vector3(loc.GetX(), loc.GetY(), 4), new Vector3(n.GetX(), n.GetY(), 4)
         });
       }
+
+      for (int i = 0; i < loc.budget[0]; i++) {
+        go = Instantiate(debugLocRiskPrefab, locGo.transform);
+        go.transform.position = new Vector3(loc.GetX() + (0.25f * (i - (loc.budget[0] / 2f))), loc.GetY(), 3.75f);
+      }
+
+      for (int i = 0; i < loc.budget[1]; i++) {
+        go = Instantiate(debugLocRewPrefab, locGo.transform);
+        go.transform.position = new Vector3(loc.GetX() + (0.25f * (i - (loc.budget[1] / 2f))), loc.GetY() - 0.25f, 3.75f);
+      }
     }
   }
 
   public void DebugSetLocationBattle() {
-    currentLocation = new LocationBattle();
+    currentLocation = new Location();
+    currentLocation.CreateBattle();
     UpdateLocationUI();
   }
 
   public void DebugSetLocationRest() {
-    currentLocation = new LocationRest();
+    currentLocation = new Location();
+    currentLocation.CreateRest();
     UpdateLocationUI();
   }
 
