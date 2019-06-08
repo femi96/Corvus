@@ -5028,8 +5028,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   battle: {fileID: 1152692074}
   debugReGenMap: 0
-  debugPushMap: 0
-  debugPullMap: 0
   debugLocPrefab: {fileID: 1437014301624270, guid: 46c94b7823dff6a4db9b031e0711accf,
     type: 2}
   debugLocRiskPrefab: {fileID: 1437014301624270, guid: ac7695e2b259b6c4fa6ba0ed4596ca50,

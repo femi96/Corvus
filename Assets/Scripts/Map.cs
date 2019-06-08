@@ -15,6 +15,8 @@ public class Map : MonoBehaviour {
     player = new Player();
     UpdatePartyUI();
     GenerateMap();
+    visitableLocoations = new List<Location> { locations[0] };
+    GoToLocation(locations[0]);
   }
 
   void Update() {
@@ -30,11 +32,43 @@ public class Map : MonoBehaviour {
 
   private int mapLayers = 6;
   private List<Location>[] lls;
+  private List<Location> visitableLocoations;
 
   public void VisitLocation() {
-    if (currentLocation != null)
-      currentLocation.Visit(this);
+    if (currentLocation == null)
+      return;
+
+    switch (currentLocation.GetLocationType()) {
+    case LocationType.Start:
+      UnlockLocations();
+      break;
+
+    case LocationType.Battle:
+      StartBattle(player.party, currentLocation.enemyParty);
+      break;
+
+    case LocationType.Rest:
+      StartRest();
+      break;
+    }
   }
+
+  public void GoToLocation(Location loc) {
+    if (!visitableLocoations.Contains(loc))
+      return;
+
+    currentLocation = loc;
+    UpdateLocationUI();
+    visitableLocoations = new List<Location>();
+  }
+
+  public void UnlockLocations() {
+    visitableLocoations = currentLocation.neighbors;
+  }
+
+
+
+  /* Location generation */
 
   private void GenerateMap() {
 
@@ -283,7 +317,6 @@ public class Map : MonoBehaviour {
 
     for (int i = 0; i < total; i++) {
       float rewardChance = usableBudget[1] / (0f + usableBudget[0] + usableBudget[1]);
-      Debug.Log(rewardChance);
 
       if (Random.Range(0f, 1f) < rewardChance) {
         if (reward < usableBudget[1])
@@ -300,7 +333,12 @@ public class Map : MonoBehaviour {
 
     usedBudget[0] += risk;
     usedBudget[1] += reward;
-    loc.CreateBattle();
+
+    if (risk > reward)
+      loc.CreateBattle();
+    else
+      loc.CreateRest();
+
     loc.budget = new int[] { risk, reward };
     loc.budgetTotal = usedBudget;
     return loc.budgetTotal;
@@ -308,7 +346,7 @@ public class Map : MonoBehaviour {
 
 
 
-  /* Debug Set Functions */
+  /* Debug Functions */
 
   [Header("Debug Variables")]
   public bool debugReGenMap = false;
@@ -325,6 +363,8 @@ public class Map : MonoBehaviour {
       GameObject go;
       GameObject locGo = Instantiate(debugLocPrefab, transform);
       locGo.transform.position = new Vector3(loc.GetX(), loc.GetY(), 4);
+      locGo.GetComponent<GoOnClick>().location = loc;
+      locGo.GetComponent<GoOnClick>().map = this;
 
       foreach (Location n in loc.neighbors) {
         go = Instantiate(debugPathPrefab, transform);
@@ -343,18 +383,6 @@ public class Map : MonoBehaviour {
         go.transform.position = new Vector3(loc.GetX() + (0.25f * (i - (loc.budget[1] / 2f))), loc.GetY() - 0.25f, 3.75f);
       }
     }
-  }
-
-  public void DebugSetLocationBattle() {
-    currentLocation = new Location();
-    currentLocation.CreateBattle();
-    UpdateLocationUI();
-  }
-
-  public void DebugSetLocationRest() {
-    currentLocation = new Location();
-    currentLocation.CreateRest();
-    UpdateLocationUI();
   }
 
 
@@ -430,10 +458,11 @@ public class Map : MonoBehaviour {
     mapUI.SetActive(true);
     battleUI.SetActive(false);
 
-    if (battle.battleState == BattleState.Win)
-      currentLocation.Clear(1);
-    else
-      currentLocation.Clear(0);
+    //if (battle.battleState == BattleState.Win)
+    // Win
+    //else
+    // Lose
+    UnlockLocations();
   }
 
 
@@ -448,10 +477,14 @@ public class Map : MonoBehaviour {
   public void EndRest() {
     mapUI.SetActive(true);
     restUI.SetActive(false);
+    UnlockLocations();
   }
 
   public void RestParty() {
     foreach (Monster m in player.party.members) {
+      if (m == null)
+        continue;
+
       float f = 5.0f + m.GetAttribute(Attr.Vit);
       m.Heal(f);
     }

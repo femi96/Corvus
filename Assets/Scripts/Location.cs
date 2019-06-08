@@ -8,7 +8,7 @@ public enum LocationType {
 
 public class Location {
 
-  public HashSet<Location> neighbors = new HashSet<Location>();
+  public List<Location> neighbors = new List<Location>();
   private string name = "None";
   private float x;
   private float y;
@@ -18,7 +18,7 @@ public class Location {
   public int[] budget = new int[] { 0, 0 };
 
   // Battle starts
-  private Party enemyParty;
+  public Party enemyParty;
 
 
   public Location() : this(0f, 0f) {}
@@ -35,32 +35,6 @@ public class Location {
   public LocationType GetLocationType() { return type; }
 
   public string GetName() { return name; }
-
-  public void Visit(Map map) {
-    switch (type) {
-    case LocationType.Battle:
-      map.StartBattle(map.player.party, enemyParty);
-      break;
-
-    case LocationType.Rest:
-      map.StartRest();
-      break;
-    }
-  }
-
-  public void Clear(int result) {
-    switch (type) {
-    case LocationType.Battle:
-
-      if (result == 0) {
-        // end run
-      } else {
-        // continue or reward
-      }
-
-      break;
-    }
-  }
 
 
 
@@ -107,7 +81,7 @@ public class Location {
   }
 
   public void ClearNeighbors() {
-    neighbors = new HashSet<Location>();
+    neighbors = new List<Location>();
   }
 
   public void CreateCoords(float x, float y) {
