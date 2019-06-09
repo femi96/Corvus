@@ -71,7 +71,7 @@ public class Battle : MonoBehaviour {
     colors = new Color[100];
 
     for (int i = 0; i < 100; i++) {
-      colors[i] = new Color(Random.Range(0.5f, 1f), Random.Range(0.5f, 1f), Random.Range(0.5f, 1f));
+      colors[i] = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
     }
   }
 
