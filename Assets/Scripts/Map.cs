@@ -67,10 +67,12 @@ public class Map : MonoBehaviour {
     currentLocation = loc;
     UpdateLocationUI();
     visitableLocoations = new List<Location>();
+    DisplayCurrentLocations();
   }
 
   public void UnlockLocations() {
     visitableLocoations = currentLocation.neighbors;
+    DisplayCurrentLocations();
   }
 
 
@@ -357,6 +359,11 @@ public class Map : MonoBehaviour {
   public GameObject locRiskPrefab;
   public GameObject pathPrefab;
 
+  public GameObject locCurrentPrefab;
+  public GameObject locPreviousPrefab;
+  public GameObject locNeighborPrefab;
+  public List<GameObject> locCurrentGameObjects;
+
   private Vector3 LocationToWorld(float x, float y) {
     Vector3 centerOffset = new Vector3(mapWidth / 2f, -mapHeight / 2f, -15f);
     Vector3 position = new Vector3(-x, y, 0f);
@@ -377,20 +384,41 @@ public class Map : MonoBehaviour {
       foreach (Location n in loc.neighbors) {
         go = Instantiate(pathPrefab, transform);
         go.GetComponent<LineRenderer>().SetPositions(new Vector3[] {
-          LocationToWorld(loc.GetX(), loc.GetY()), LocationToWorld(n.GetX(), n.GetY())
+          LocationToWorld(loc.GetX(), loc.GetY()),  LocationToWorld(n.GetX(), n.GetY())
         });
       }
 
       for (int i = 0; i < loc.budget[0]; i++) {
-        go = Instantiate(locRiskPrefab, locGo.transform);
-        go.transform.position = LocationToWorld(loc.GetX(), loc.GetY()) + new Vector3(0.25f * (i - (loc.budget[0] / 2f)), 0.125f, 1f);
+        go = Instantiate(locRiskPrefab, transform);
+        go.transform.position = LocationToWorld(loc.GetX(), loc.GetY()) + new Vector3(0.25f * (i - (loc.budget[0] / 2f)), 0.125f, 0);
       }
 
       for (int i = 0; i < loc.budget[1]; i++) {
-        go = Instantiate(locRewardPrefab, locGo.transform);
-        go.transform.position = LocationToWorld(loc.GetX(), loc.GetY()) + new Vector3(0.25f * (i - (loc.budget[1] / 2f)), -0.125f, 1f);
+        go = Instantiate(locRewardPrefab, transform);
+        go.transform.position = LocationToWorld(loc.GetX(), loc.GetY()) + new Vector3(0.25f * (i - (loc.budget[1] / 2f)), -0.125f, 0);
       }
     }
+  }
+
+  private void DisplayCurrentLocations() {
+    if (locCurrentGameObjects == null)
+      locCurrentGameObjects = new List<GameObject>();
+
+    foreach (GameObject go in locCurrentGameObjects)
+      Destroy(go);
+
+    foreach (Location loc in visitableLocoations) {
+      GameObject go = Instantiate(locNeighborPrefab, transform);
+      go.transform.position = LocationToWorld(loc.GetX(), loc.GetY());
+      locCurrentGameObjects.Add(go);
+    }
+
+    GameObject goCur = Instantiate(locCurrentPrefab, transform);
+    goCur.transform.position = LocationToWorld(currentLocation.GetX(), currentLocation.GetY());
+    locCurrentGameObjects.Add(goCur);
+
+    GameObject goPrev = Instantiate(locPreviousPrefab, transform);
+    goPrev.transform.position = LocationToWorld(currentLocation.GetX(), currentLocation.GetY());
   }
 
 
@@ -430,6 +458,7 @@ public class Map : MonoBehaviour {
   public GameObject mapUI;
   public GameObject battleUI;
   public GameObject restUI;
+  public GameObject partyUI;
 
   public Text locationUI;
 
@@ -456,6 +485,10 @@ public class Map : MonoBehaviour {
       t.Find("Pos1Rmv").gameObject.SetActive(player.party.board[1] == mon);
       t.Find("Pos2Rmv").gameObject.SetActive(player.party.board[2] == mon);
     }
+  }
+
+  public void TogglePartyUI() {
+    partyUI.SetActive(!partyUI.activeInHierarchy);
   }
 
 
