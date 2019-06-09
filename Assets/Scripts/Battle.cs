@@ -71,7 +71,7 @@ public class Battle : MonoBehaviour {
     colors = new Color[100];
 
     for (int i = 0; i < 100; i++) {
-      colors[i] = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
+      colors[i] = new Color(Random.Range(0.5f, 1f), Random.Range(0.5f, 1f), Random.Range(0.5f, 1f));
     }
   }
 
@@ -103,11 +103,11 @@ public class Battle : MonoBehaviour {
   private Vector3 ContextToWorld(int side, int pos, bool isMonster = false) {
     int sign = 2 * side - 1;
     Vector3 spacing = new Vector3(1.2f, 0, 0);
-    Vector3 depth = new Vector3(0, 0.15f, 1f);
+    Vector3 depth = new Vector3(0, 0, 1f);
     Vector3 output = (spacing * (pos + 1) * sign) + (depth * (2 - pos));
 
     if (isMonster)
-      output += 0.5f * Vector3.up;
+      output += 1.4f * Vector3.up;
 
     return output;
   }
@@ -149,6 +149,9 @@ public class Battle : MonoBehaviour {
     m.body = Instantiate(monPrefab, transform);
     m.body.GetComponent<Renderer>().material.SetColor("_Color", colors[m.monID]);
     m.healthBar = Instantiate(hbPrefab, transform);
+
+    if (m.partySide == 1)
+      m.body.GetComponent<SpriteRenderer>().flipX = true;
   }
 
   private void RemoveMonsterGameObject(Monster m) {
@@ -178,8 +181,8 @@ public class Battle : MonoBehaviour {
       Color hbColor = Mathf.Clamp((hR - 0.5f) / 0.1f, 0f, 1f) * g +
                       Mathf.Clamp((0.25f - Mathf.Abs(0.35f - hR)) / 0.1f, 0f, 1f) * y +
                       Mathf.Clamp((0.2f - hR) / 0.1f, 0f, 1f) * r;
-      m.healthBar.transform.position = ContextToWorld(m) + 0.8f * Vector3.up;
-      m.healthBar.transform.localScale = new Vector3(hR, 0.2f, 0.2f);
+      m.healthBar.transform.position = ContextToWorld(m) + 1.5f * Vector3.up;
+      m.healthBar.transform.localScale = new Vector3(hR, 0.2f, 1f);
       m.healthBar.GetComponent<Renderer>().material.SetColor("_Color", hbColor);
     }
   }
@@ -211,7 +214,7 @@ public class Battle : MonoBehaviour {
       return;
     }
 
-    cursorGo.transform.position = ContextToWorld(currentMonster) + Vector3.up;
+    cursorGo.transform.position = ContextToWorld(currentMonster) + 2.0f * Vector3.up;
     UpdateUI();
 
     // if AI, use AI and get next action
@@ -274,7 +277,7 @@ public class Battle : MonoBehaviour {
 
     if (battleState == BattleState.Ongoing) {
       if (GetNextCurrentMonster()) {
-        cursorGo.transform.position = ContextToWorld(currentMonster) + Vector3.up;
+        cursorGo.transform.position = ContextToWorld(currentMonster) + 2.0f * Vector3.up;
       } else {
         StartEndPhase();
       }

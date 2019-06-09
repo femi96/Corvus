@@ -9,6 +9,9 @@ public class Map : MonoBehaviour {
   public Player player;
   public Battle battle;
 
+  public GameObject mapCam;
+  public GameObject battleCam;
+
   public List<Location> locations;
 
   void Start() {
@@ -17,6 +20,8 @@ public class Map : MonoBehaviour {
     GenerateMap();
     visitableLocoations = new List<Location> { locations[0] };
     GoToLocation(locations[0]);
+    mapCam.SetActive(true);
+    battleCam.SetActive(false);
   }
 
   void Update() {
@@ -31,6 +36,8 @@ public class Map : MonoBehaviour {
   /* Location managements */
 
   private int mapLayers = 6;
+  private float mapWidth = 20f;
+  private float mapHeight = 10f;
   private List<Location>[] lls;
   private List<Location> visitableLocoations;
 
@@ -71,10 +78,6 @@ public class Map : MonoBehaviour {
   /* Location generation */
 
   private void GenerateMap() {
-
-    float mapWidth = 20f;
-    float mapHeight = 10f;
-
     List<Location> ls = new List<Location>();
 
     // Start & end node
@@ -210,7 +213,7 @@ public class Map : MonoBehaviour {
     }
 
     GenerateLocationTypes();
-    DebugDisplayLocations();
+    DisplayLocations();
   }
 
   private void GenerateStepPullNodes(float pullRadius) {
@@ -346,44 +349,56 @@ public class Map : MonoBehaviour {
 
 
 
-  /* Debug Functions */
+  /* Display map locations */
 
-  [Header("Debug Variables")]
-  public bool debugReGenMap = false;
-  public GameObject debugLocPrefab;
-  public GameObject debugLocRiskPrefab;
-  public GameObject debugLocRewPrefab;
-  public GameObject debugPathPrefab;
+  [Header("Locationo Map Prefabs")]
+  public GameObject locPrefab;
+  public GameObject locRewardPrefab;
+  public GameObject locRiskPrefab;
+  public GameObject pathPrefab;
 
-  private void DebugDisplayLocations() {
+  private Vector3 LocationToWorld(float x, float y) {
+    Vector3 centerOffset = new Vector3(mapWidth / 2f, -mapHeight / 2f, -15f);
+    Vector3 position = new Vector3(-x, y, 0f);
+    return position + centerOffset;
+  }
+
+  private void DisplayLocations() {
     foreach (Transform child in transform)
       Destroy(child.gameObject);
 
     foreach (Location loc in locations) {
       GameObject go;
-      GameObject locGo = Instantiate(debugLocPrefab, transform);
-      locGo.transform.position = new Vector3(loc.GetX(), loc.GetY(), 4);
+      GameObject locGo = Instantiate(locPrefab, transform);
+      locGo.transform.position = LocationToWorld(loc.GetX(), loc.GetY());
       locGo.GetComponent<GoOnClick>().location = loc;
       locGo.GetComponent<GoOnClick>().map = this;
 
       foreach (Location n in loc.neighbors) {
-        go = Instantiate(debugPathPrefab, transform);
+        go = Instantiate(pathPrefab, transform);
         go.GetComponent<LineRenderer>().SetPositions(new Vector3[] {
-          new Vector3(loc.GetX(), loc.GetY(), 4), new Vector3(n.GetX(), n.GetY(), 4)
+          LocationToWorld(loc.GetX(), loc.GetY()), LocationToWorld(n.GetX(), n.GetY())
         });
       }
 
       for (int i = 0; i < loc.budget[0]; i++) {
-        go = Instantiate(debugLocRiskPrefab, locGo.transform);
-        go.transform.position = new Vector3(loc.GetX() + (0.25f * (i - (loc.budget[0] / 2f))), loc.GetY(), 3.75f);
+        go = Instantiate(locRiskPrefab, locGo.transform);
+        go.transform.position = LocationToWorld(loc.GetX(), loc.GetY()) + new Vector3(0.25f * (i - (loc.budget[0] / 2f)), 0.125f, 1f);
       }
 
       for (int i = 0; i < loc.budget[1]; i++) {
-        go = Instantiate(debugLocRewPrefab, locGo.transform);
-        go.transform.position = new Vector3(loc.GetX() + (0.25f * (i - (loc.budget[1] / 2f))), loc.GetY() - 0.25f, 3.75f);
+        go = Instantiate(locRewardPrefab, locGo.transform);
+        go.transform.position = LocationToWorld(loc.GetX(), loc.GetY()) + new Vector3(0.25f * (i - (loc.budget[1] / 2f)), -0.125f, 1f);
       }
     }
   }
+
+
+
+  /* Debug Functions */
+
+  [Header("Debug Variables")]
+  public bool debugReGenMap = false;
 
 
 
@@ -450,6 +465,8 @@ public class Map : MonoBehaviour {
   public void StartBattle(Party allyParty, Party enemyParty) {
     mapUI.SetActive(false);
     battleUI.SetActive(true);
+    mapCam.SetActive(false);
+    battleCam.SetActive(true);
 
     battle.StartBattle(allyParty, enemyParty);
   }
@@ -457,6 +474,8 @@ public class Map : MonoBehaviour {
   public void EndBattle() {
     mapUI.SetActive(true);
     battleUI.SetActive(false);
+    mapCam.SetActive(true);
+    battleCam.SetActive(false);
 
     //if (battle.battleState == BattleState.Win)
     // Win
