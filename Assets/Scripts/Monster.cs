@@ -102,7 +102,7 @@ public class Monster {
   }
 
   private void CalculateDerivedStats() {
-    maxHealth = Mathf.RoundToInt(20 + (attrs[Attr.Vit] * 3) + attrs[Attr.Str]);
+    maxHealth = Mathf.RoundToInt(20000 + (attrs[Attr.Vit] * 3) + attrs[Attr.Str]);
     initiative = Mathf.RoundToInt(0 + attrs[Attr.Rea]);
     evasion = Mathf.RoundToInt(0 + attrs[Attr.Agi] + attrs[Attr.Rea]);
     vitalResist = Mathf.RoundToInt(attrs[Attr.Vit]);

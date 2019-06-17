@@ -6911,6 +6911,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   map: {fileID: 855978679}
+  camMover: {fileID: 1984258697}
   battleState: 0
   battlePhase: 0
   colors: []
@@ -11995,6 +11996,7 @@ GameObject:
   - component: {fileID: 1984258696}
   - component: {fileID: 1984258695}
   - component: {fileID: 1984258694}
+  - component: {fileID: 1984258697}
   m_Layer: 0
   m_Name: BattleCamera
   m_TagString: MainCamera
@@ -12058,6 +12060,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1984258697
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1984258693}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d433c94b285ef041bdcb5a990d6c4e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveDuration: 0.8
+  targetPullFactor: {x: 0.25, y: 0, z: 0.125}
 --- !u!1 &1984707453
 GameObject:
   m_ObjectHideFlags: 0

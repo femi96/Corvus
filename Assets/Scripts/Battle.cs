@@ -19,6 +19,8 @@ public enum ActionType {
 public class Battle : MonoBehaviour {
 
   public Map map;
+  public CameraMover camMover;
+
   public BattleState battleState = BattleState.Inactive;
   public BattlePhase battlePhase = BattlePhase.Selection;
 
@@ -215,6 +217,7 @@ public class Battle : MonoBehaviour {
     }
 
     cursorGo.transform.position = ContextToWorld(currentMonster) + 2.0f * Vector3.up;
+    camMover.SetAnchor(cursorGo.transform.position);
     UpdateUI();
 
     // if AI, use AI and get next action
@@ -278,6 +281,7 @@ public class Battle : MonoBehaviour {
     if (battleState == BattleState.Ongoing) {
       if (GetNextCurrentMonster()) {
         cursorGo.transform.position = ContextToWorld(currentMonster) + 2.0f * Vector3.up;
+        camMover.SetAnchor(cursorGo.transform.position);
       } else {
         StartEndPhase();
       }
