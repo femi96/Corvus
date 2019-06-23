@@ -37,6 +37,8 @@ public class Battle : MonoBehaviour {
 
 
 
+
+
   /* Battle usage */
 
   public void StartBattle(Party allyParty, Party enemyParty) {
@@ -53,6 +55,7 @@ public class Battle : MonoBehaviour {
     UpdateMonsterContext();
     GenerateInitialGameObjects();
 
+    CloseMessage();
     StartSelectionPhase();
   }
 
@@ -113,6 +116,8 @@ public class Battle : MonoBehaviour {
 
     return output;
   }
+
+
 
 
 
@@ -191,6 +196,8 @@ public class Battle : MonoBehaviour {
 
 
 
+
+
   /* Selection phase */
 
   private int selectionIndex = 0;
@@ -266,6 +273,8 @@ public class Battle : MonoBehaviour {
 
 
 
+
+
   /* Execution phase */
 
   private void StartExecutionPhase() {
@@ -276,6 +285,7 @@ public class Battle : MonoBehaviour {
   }
 
   private void GetNextExecute() {
+    CloseMessage();
     CheckEndCondition();
 
     if (battleState == BattleState.Ongoing) {
@@ -289,23 +299,43 @@ public class Battle : MonoBehaviour {
   }
 
   private void ExecuteWait() {
-    Debug.Log(currentMonster.name + " waits.");
-    GetNextExecute();
+    switch (executionPhase) {
+    case -1:
+      SetMessage(currentMonster.name + " waits.");
+      executionPhase = 0; // End
+      executionDelay = 0f;
+      return;
+    }
   }
 
   private void ExecuteMove() {
-    MoveMonster(currentMonster, currentMonster.actionParamInt);
-    GetNextExecute();
+    switch (executionPhase) {
+    case -1:
+      executionPhase = 0; // End
+      executionDelay = 0f;
+      MoveMonster(currentMonster, currentMonster.actionParamInt);
+      return;
+    }
   }
 
   private void ExecuteSwap() {
-    SwapMonster(currentMonster, currentMonster.actionParamInt);
-    GetNextExecute();
+    switch (executionPhase) {
+    case -1:
+      executionPhase = 0; // End
+      executionDelay = 0f;
+      SwapMonster(currentMonster, currentMonster.actionParamInt);
+      return;
+    }
   }
 
   private void ExecuteUseMove() {
-    UseMove(currentMonster, currentMonster.actionParamInt);
-    GetNextExecute();
+    switch (executionPhase) {
+    case -1:
+      executionPhase = 0; // End
+      executionDelay = 0f;
+      UseMove(currentMonster, currentMonster.actionParamInt);
+      return;
+    }
   }
 
   private void ResetInitiative() {
@@ -373,6 +403,8 @@ public class Battle : MonoBehaviour {
 
 
 
+
+
   /* End phase */
 
   private void StartEndPhase() {
@@ -383,21 +415,29 @@ public class Battle : MonoBehaviour {
 
 
 
+
+
   /* Real time action */
 
-  private float actionDelay = 0;
+  private float actionDelay = 1f;
+  private float actionDelayTime = 0f;
+
+  private float executionDelay = 0f;
+  private float executionDelayTime = 0f;
+
+  private int executionPhase = -1;
 
   void Update() {
 
     if (battleState != BattleState.Ongoing) {
 
       if (battleState == BattleState.Win || battleState == BattleState.Lose) {
-        actionDelay += Time.deltaTime;
+        actionDelayTime += Time.deltaTime;
 
-        if (actionDelay >= 1) {
+        if (actionDelayTime >= actionDelay) {
           map.EndBattle();
           battleState = BattleState.Inactive;
-          actionDelay = 0;
+          actionDelayTime = 0;
         }
       }
 
@@ -407,29 +447,44 @@ public class Battle : MonoBehaviour {
     // While battle is ongoing
 
     if (battlePhase == BattlePhase.Execution) {
-      actionDelay += Time.deltaTime;
+      actionDelayTime += Time.deltaTime;
 
-      if (actionDelay >= 1) {
-        switch (currentMonster.actionType) {
-        case ActionType.Wait:
-          ExecuteWait();
-          break;
+      if (actionDelayTime < actionDelay)
+        return;
 
-        case ActionType.Move:
-          ExecuteMove();
-          break;
+      executionDelayTime += Time.deltaTime;
 
-        case ActionType.Swap:
-          ExecuteSwap();
-          break;
+      if (executionDelayTime < executionDelay || !(Inputs.NextMessage() || executionPhase == -1))
+        return;
 
-        case ActionType.UseMove:
-          ExecuteUseMove();
-          break;
-        }
-
-        actionDelay = 0;
+      if (executionPhase == 0) {
+        // executionPhase == 0 is end
+        actionDelayTime = 0;
+        executionDelay = 0;
+        executionPhase = -1;
+        GetNextExecute();
+        return;
       }
+
+      switch (currentMonster.actionType) {
+      case ActionType.Wait:
+        ExecuteWait();
+        break;
+
+      case ActionType.Move:
+        ExecuteMove();
+        break;
+
+      case ActionType.Swap:
+        ExecuteSwap();
+        break;
+
+      case ActionType.UseMove:
+        ExecuteUseMove();
+        break;
+      }
+
+      executionDelayTime = 0f;
     }
   }
 
@@ -441,9 +496,9 @@ public class Battle : MonoBehaviour {
     Monster movingMon;
 
     if (dir > 0)
-      Debug.Log(parties[side].board[pos].name + " moved forwards " + dir + ".");
+      SetMessage(parties[side].board[pos].name + " moved backwards " + dir + ".");
     else
-      Debug.Log(parties[side].board[pos].name + " moved backwards " + -dir + ".");
+      SetMessage(parties[side].board[pos].name + " moved forwards " + -dir + ".");
 
     while (dir != 0) {
       if ((dir > 0 && pos == 2) || (dir < 0 && pos == 0)) {
@@ -461,6 +516,7 @@ public class Battle : MonoBehaviour {
 
       UpdateMonsterContext();
       UpdateMonsterRep();
+      cursorGo.transform.position = ContextToWorld(currentMonster) + 2.0f * Vector3.up;
     }
   }
 
@@ -470,11 +526,11 @@ public class Battle : MonoBehaviour {
     Monster swappingMon = party.members[newMon];
 
     if (swappingMon == null || party.board.Contains(swappingMon)) {
-      Debug.Log(oldMon.name + " swap with " + swappingMon.name + " failed.");
+      SetMessage(oldMon.name + " swap with " + swappingMon.name + " failed.");
       return;
     }
 
-    Debug.Log(oldMon.name + " swaps with " + swappingMon.name + ".");
+    SetMessage(oldMon.name + " swaps with " + swappingMon.name + ".");
 
     // Old mon objects
     RemoveMonsterGameObject(oldMon);
@@ -493,7 +549,7 @@ public class Battle : MonoBehaviour {
   private void UseMove(Monster mon, int moveIndex) {
     Move mov = mon.moves[moveIndex];
 
-    Debug.Log(mon.name + " " + mon.currentInitiative + " uses move " + mov.GetName() + ".");
+    SetMessage(mon.name + " uses move " + mov.GetName() + ".");
 
     if (mov != null) {
       TargetType[] targetTypes = mov.GetTargetTypes();
@@ -538,6 +594,8 @@ public class Battle : MonoBehaviour {
 
 
 
+
+
   /* UI */
 
   [Header("UI Pointers")]
@@ -546,6 +604,9 @@ public class Battle : MonoBehaviour {
   public Text[] movesTextUI;
   public GameObject[] swapUI;
   public Text[] swapTextUI;
+
+  public GameObject messageUI;
+  public Text messageTextUI;
 
   public GameObject winUI;
   public GameObject loseUI;
@@ -584,5 +645,15 @@ public class Battle : MonoBehaviour {
         j += 1;
       }
     }
+  }
+
+  private void SetMessage(string str) {
+    messageTextUI.text = str;
+    messageUI.SetActive(true);
+  }
+
+  private void CloseMessage() {
+    messageUI.SetActive(false);
+    messageTextUI.text = "";
   }
 }
