@@ -46,7 +46,8 @@ public class Unit : MonoBehaviour {
 
     case ActionState.Moving:
       float i = Mathf.Min(actionTime / moveDuration, 1.0f);
-      transform.position = Vector3.Lerp(prevTile.transform.position, nextTile.transform.position, i);
+      Vector3 tilePos = Vector3.Lerp(prevTile.transform.position, nextTile.transform.position, i);
+      transform.position = tilePos + 0.75f * Vector3.up;
 
       if (i >= 0.5f) {
         currentTile = nextTile;
