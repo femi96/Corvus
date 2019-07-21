@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
-public enum BattleState {
+public enum BattleStateOld {
   Inactive, Ongoing, Win, Lose
 }
 
@@ -21,7 +21,7 @@ public class Battle : MonoBehaviour {
   public Map map;
   public CameraMover camMover;
 
-  public BattleState battleState = BattleState.Inactive;
+  public BattleStateOld battleStateOld = BattleStateOld.Inactive;
   public BattlePhase battlePhase = BattlePhase.Selection;
 
   public Party[] parties;
@@ -42,7 +42,7 @@ public class Battle : MonoBehaviour {
   /* Battle usage */
 
   public void StartBattle(Party allyParty, Party enemyParty) {
-    battleState = BattleState.Ongoing;
+    battleStateOld = BattleStateOld.Ongoing;
 
     parties = new Party[2];
     parties[0] = allyParty;
@@ -288,7 +288,7 @@ public class Battle : MonoBehaviour {
     CloseMessage();
     CheckEndCondition();
 
-    if (battleState == BattleState.Ongoing) {
+    if (battleStateOld == BattleStateOld.Ongoing) {
       if (GetNextCurrentMonster()) {
         cursorGo.transform.position = ContextToWorld(currentMonster) + 2.0f * Vector3.up;
         camMover.SetAnchor(cursorGo.transform.position);
@@ -390,12 +390,12 @@ public class Battle : MonoBehaviour {
 
     if (allyLoss) {
       // End loss
-      battleState = BattleState.Lose;
+      battleStateOld = BattleStateOld.Lose;
     }
 
     if (enemyLoss) {
       // End win
-      battleState = BattleState.Win;
+      battleStateOld = BattleStateOld.Win;
     }
 
     UpdateUI();
@@ -429,14 +429,14 @@ public class Battle : MonoBehaviour {
 
   void Update() {
 
-    if (battleState != BattleState.Ongoing) {
+    if (battleStateOld != BattleStateOld.Ongoing) {
 
-      if (battleState == BattleState.Win || battleState == BattleState.Lose) {
+      if (battleStateOld == BattleStateOld.Win || battleStateOld == BattleStateOld.Lose) {
         actionDelayTime += Time.deltaTime;
 
         if (actionDelayTime >= actionDelay) {
           map.EndBattle();
-          battleState = BattleState.Inactive;
+          battleStateOld = BattleStateOld.Inactive;
           actionDelayTime = 0;
         }
       }
@@ -612,10 +612,10 @@ public class Battle : MonoBehaviour {
   public GameObject loseUI;
 
   private void UpdateUI() {
-    winUI.SetActive(battleState == BattleState.Win);
-    loseUI.SetActive(battleState == BattleState.Lose);
+    winUI.SetActive(battleStateOld == BattleStateOld.Win);
+    loseUI.SetActive(battleStateOld == BattleStateOld.Lose);
 
-    if (battleState != BattleState.Ongoing || battlePhase != BattlePhase.Selection) {
+    if (battleStateOld != BattleStateOld.Ongoing || battlePhase != BattlePhase.Selection) {
       allUI.SetActive(false);
       return;
     }
