@@ -20,6 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4146470390805286}
   - component: {fileID: 114283033838395730}
+  - component: {fileID: 114371286609833408}
   m_Layer: 0
   m_Name: Board
   m_TagString: Untagged
@@ -51,4 +52,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d392d7d0f4751b48b12962ed0e38ef7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  units:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   battleState: 0
+  debugToggleBattle: 0
+  clickSelection: {fileID: 0}
+--- !u!114 &114371286609833408
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1956345265812810}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af727b121c05bf848a8e664a413d57ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  selectedUnit: {fileID: 0}

@@ -21,7 +21,6 @@ GameObject:
   - component: {fileID: 4050290703665668}
   - component: {fileID: 33483120345158782}
   - component: {fileID: 23166297509478598}
-  - component: {fileID: 135706394605018542}
   m_Layer: 0
   m_Name: Sphere
   m_TagString: Untagged
@@ -38,6 +37,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4187742685550666}
   - component: {fileID: 114915014628948264}
+  - component: {fileID: 135713698128593370}
   m_Layer: 0
   m_Name: Unit
   m_TagString: Untagged
@@ -130,12 +130,12 @@ MonoBehaviour:
   energy: 0
   actionState: 0
   currentTile: {fileID: 0}
---- !u!135 &135706394605018542
+--- !u!135 &135713698128593370
 SphereCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1404203312113614}
+  m_GameObject: {fileID: 1786158039230264}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1

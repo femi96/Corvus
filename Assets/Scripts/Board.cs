@@ -11,7 +11,11 @@ public class Board : MonoBehaviour {
   public BattleState battleState;
   public bool debugToggleBattle;
 
+  public ClickSelection clickSelection;
+  public Transform tileContainer;
+
   void Start() {
+    clickSelection = GetComponent<ClickSelection>();
     BoardSetup();
   }
 
@@ -19,12 +23,13 @@ public class Board : MonoBehaviour {
     battleState = BattleState.Off;
     tiles = new List<Tile>();
 
-    foreach (Transform child in transform) {
+    foreach (Transform child in tileContainer) {
       Tile tile = child.GetComponent<Tile>();
 
       if (tile != null) {
         tile.tileName = "Fren" + tiles.Count;
         tiles.Add(tile);
+        tile.board = this;
       }
     }
 

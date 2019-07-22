@@ -28,6 +28,21 @@ public class Unit : MonoBehaviour {
 
   }
 
+  void OnMouseOver() {
+    if (Input.GetMouseButtonDown(0))
+      board.clickSelection.OnClickUnit(this);
+  }
+
+  public void MoveToTile(Tile tile) {
+    if (currentTile.unit == this)
+      currentTile.unit = null;
+
+    currentTile = tile;
+    currentTile.unit = this;
+    Vector3 tilePos = currentTile.transform.position;
+    transform.position = tilePos + 0.75f * Vector3.up;
+  }
+
   public void ResetUnit() {
     health = 40;
     energy = 0;
