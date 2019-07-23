@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum ActionState { Wait, Dead, Moving };
+public enum ActionState { Wait, Dead, Moving, Acting };
 
 public class Unit : MonoBehaviour {
 
@@ -15,10 +15,18 @@ public class Unit : MonoBehaviour {
   private float actionTime = 0;
 
   // Moving
-  private const float moveDuration = 0.2f;
+  private const float moveDuration = 0.5f;
   public Tile currentTile;
   private Tile nextTile;
   private Tile prevTile;
+
+  // Acting
+  private const float actDuration = 1f;
+  private Move move;
+  private Tile[] targetTiles;
+  private List<Unit> targetsHit;
+  private GameObject actGo;
+  public GameObject actPrefab;
 
   void Start() {
     ResetUnit();
@@ -31,6 +39,22 @@ public class Unit : MonoBehaviour {
   void OnMouseOver() {
     if (Input.GetMouseButtonDown(0))
       board.clickSelection.OnClickUnit(this);
+  }
+
+  public void DealDamage(float damage) {
+    float prehealth = health;
+    health = Mathf.Max(health - damage, 0);
+
+    Debug.Log("Unit takes " + damage + " damage. " + prehealth + " -> " + health);
+    TryDead();
+  }
+
+  private void TryDead() {
+    if (health > 0)
+      return;
+
+    Debug.Log("Unit dies");
+    ChangeActionState(ActionState.Dead);
   }
 
   public void MoveToTile(Tile tile) {
@@ -56,7 +80,13 @@ public class Unit : MonoBehaviour {
 
     switch (actionState) {
     case ActionState.Wait:
-      ChangeActionState(ActionState.Moving);
+
+      // Add AI to decide action when waiting
+      if (Random.Range(0f, 1f) > 0.5f)
+        ChangeActionState(ActionState.Moving);
+      else
+        ChangeActionState(ActionState.Acting);
+
       break;
 
     case ActionState.Moving:
@@ -64,11 +94,29 @@ public class Unit : MonoBehaviour {
       Vector3 tilePos = Vector3.Lerp(prevTile.transform.position, nextTile.transform.position, i);
       transform.position = tilePos + 0.75f * Vector3.up;
 
-      if (i >= 0.5f) {
-        currentTile = nextTile;
+      if (i >= 1.0f) {
+        ChangeActionState(ActionState.Wait);
       }
 
-      if (i >= 1.0f) {
+      break;
+
+    case ActionState.Acting:
+      float a = Mathf.Min(actionTime / actDuration, 1.0f);
+
+      if (a >= 0.5f) {
+        foreach (Tile actTile in targetTiles) {
+          if (actTile.unit != null && !targetsHit.Contains(actTile.unit))
+            actTile.unit.DealDamage(10);
+
+          if (actGo == null) {
+            actGo = Instantiate(actPrefab, transform);
+            actGo.transform.position = actTile.transform.position;
+          }
+        }
+      }
+
+      if (a >= 1.0f) {
+        Destroy(actGo);
         ChangeActionState(ActionState.Wait);
       }
 
@@ -94,14 +142,24 @@ public class Unit : MonoBehaviour {
       if (nextTile.unit == null) {
         nextTile.unit = this;
         prevTile.unit = null;
+        currentTile = nextTile;
       } else {
         ChangeActionState(ActionState.Wait);
       }
 
       break;
 
-    case ActionState.Wait:
+    case ActionState.Acting:
+      targetTiles = new Tile[] { currentTile.neighbors[Random.Range(0, currentTile.neighbors.Count)] };
+      targetsHit = new List<Unit>();
+      break;
+
     case ActionState.Dead:
+      currentTile.unit = null;
+      transform.position = transform.position + -0.75f * Vector3.up;
+      break;
+
+    case ActionState.Wait:
     default:
       return;
     }

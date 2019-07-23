@@ -47,14 +47,16 @@ public class Board : MonoBehaviour {
 
   private void StartBattle() {
 
-    foreach (Unit unit in units) {
-      unit.ResetUnit();
-    }
-
     battleState = BattleState.On;
   }
 
   private void EndBattle() {
+
+    foreach (Unit unit in units) {
+      unit.ResetUnit();
+      unit.MoveToTile(unit.currentTile);
+    }
+
     battleState = BattleState.Off;
   }
 
@@ -63,9 +65,9 @@ public class Board : MonoBehaviour {
 
     if (debugToggleBattle) {
       if (battleState == BattleState.Off)
-        battleState = BattleState.On;
+        StartBattle();
       else
-        battleState = BattleState.Off;
+        EndBattle();
 
       debugToggleBattle = false;
     }
