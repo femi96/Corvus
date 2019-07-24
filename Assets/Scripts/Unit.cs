@@ -21,12 +21,7 @@ public class Unit : MonoBehaviour {
   private Tile prevTile;
 
   // Acting
-  private const float actDuration = 1f;
   private Move move;
-  private Tile[] targetTiles;
-  private List<Unit> targetsHit;
-  private GameObject actGo;
-  public GameObject actPrefab;
 
   void Start() {
     ResetUnit();
@@ -84,8 +79,10 @@ public class Unit : MonoBehaviour {
       // Add AI to decide action when waiting
       if (Random.Range(0f, 1f) > 0.5f)
         ChangeActionState(ActionState.Moving);
-      else
+      else {
+        move = new Scratch();
         ChangeActionState(ActionState.Acting);
+      }
 
       break;
 
@@ -101,24 +98,10 @@ public class Unit : MonoBehaviour {
       break;
 
     case ActionState.Acting:
-      float a = Mathf.Min(actionTime / actDuration, 1.0f);
+      bool actingDone = move.Step(actionTime);
 
-      if (a >= 0.5f) {
-        foreach (Tile actTile in targetTiles) {
-          if (actTile.unit != null && !targetsHit.Contains(actTile.unit))
-            actTile.unit.DealDamage(10);
-
-          if (actGo == null) {
-            actGo = Instantiate(actPrefab, transform);
-            actGo.transform.position = actTile.transform.position;
-          }
-        }
-      }
-
-      if (a >= 1.0f) {
-        Destroy(actGo);
+      if (actingDone)
         ChangeActionState(ActionState.Wait);
-      }
 
       break;
 
@@ -150,8 +133,7 @@ public class Unit : MonoBehaviour {
       break;
 
     case ActionState.Acting:
-      targetTiles = new Tile[] { currentTile.neighbors[Random.Range(0, currentTile.neighbors.Count)] };
-      targetsHit = new List<Unit>();
+      move.Setup(this);
       break;
 
     case ActionState.Dead:
