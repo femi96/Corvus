@@ -52,6 +52,9 @@ public class Board : MonoBehaviour {
 
   private void EndBattle() {
 
+    foreach (Transform child in MovePrefabs.container)
+      Destroy(child.gameObject);
+
     foreach (Unit unit in units) {
       unit.ResetUnit();
       unit.MoveToTile(unit.currentTile);
