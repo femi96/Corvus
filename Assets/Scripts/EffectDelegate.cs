@@ -12,7 +12,7 @@ public class EffectDelegate : MonoBehaviour {
 
     if (methodToCall != null
         && unit != null
-        && unit.actionState != ActionState.Dead)
+        && unit.IsAlive())
       methodToCall(unit);
   }
 }

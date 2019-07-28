@@ -8,6 +8,8 @@ public class Unit : MonoBehaviour {
 
   public Board board;
 
+  public int team = 0;
+
   public float health;
   public float energy;
 
@@ -50,6 +52,10 @@ public class Unit : MonoBehaviour {
 
     Debug.Log("Unit dies");
     ChangeActionState(ActionState.Dead);
+  }
+
+  public bool IsAlive() {
+    return actionState != ActionState.Dead;
   }
 
   public void MoveToTile(Tile tile) {

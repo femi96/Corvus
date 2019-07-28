@@ -10,6 +10,7 @@ public class Board : MonoBehaviour {
   public Unit[] units;
   public BattleState battleState;
   public bool debugToggleBattle;
+  public bool debugLoopBattle;
 
   public ClickSelection clickSelection;
   public Transform tileContainer;
@@ -83,6 +84,26 @@ public class Board : MonoBehaviour {
     // Call effects that take place during battle
     foreach (Unit unit in units) {
       unit.ActionStep();
+    }
+
+    TryBattleDone();
+  }
+
+  private void TryBattleDone() {
+    List<int> alive = new List<int>();
+
+    foreach (Unit unit in units) {
+      if (unit.IsAlive() && !alive.Contains(unit.team))
+        alive.Add(unit.team);
+    }
+
+    if (alive.Count == 1) {
+      int winner = alive[0];
+      Debug.Log("Team " + winner + " wins");
+      EndBattle();
+
+      if (debugLoopBattle)
+        StartBattle();
     }
   }
 }
