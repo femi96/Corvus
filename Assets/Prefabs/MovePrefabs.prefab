@@ -20,6 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4912099996620258}
   - component: {fileID: 114052437671456486}
+  - component: {fileID: 114650478391623408}
   m_Layer: 0
   m_Name: MovePrefabs
   m_TagString: Untagged
@@ -53,3 +54,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   scratchPrefab: {fileID: 1011939524647870, guid: 63f37073c6949cf4fa4b8a4717abf09c,
     type: 2}
+--- !u!114 &114650478391623408
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1762384584999768}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5454979db2f1fbf4ca8c91d89e5f676f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ashirePrefab: {fileID: 1867281160195042, guid: 8f67e1ca911f1a24887b7eaca693839e,
+    type: 2}
+  shenPrefab: {fileID: 1867281160195042, guid: d4167103a6b5d9340871b7591e620652, type: 2}

@@ -10,6 +10,9 @@ public class Unit : MonoBehaviour {
 
   public int team = 0;
 
+  private Monster monster;
+  private GameObject model;
+
   public float health;
   public float energy;
 
@@ -26,11 +29,25 @@ public class Unit : MonoBehaviour {
   private Move move;
 
   void Start() {
+    if (Random.Range(0f, 1f) > 0.5f)
+      monster = new Ashire();
+    else
+      monster = new Shen();
+
+    ResetModel();
     ResetUnit();
   }
 
   void Update() {
 
+  }
+
+  private void ResetModel() {
+    foreach (Transform child in transform)
+      Destroy(child.gameObject);
+
+    model = monster.GetPrefab();
+    model = Instantiate(model, transform);
   }
 
   void OnMouseOver() {
@@ -86,7 +103,7 @@ public class Unit : MonoBehaviour {
       if (Random.Range(0f, 1f) > 0.5f)
         ChangeActionState(ActionState.Moving);
       else {
-        move = new Scratch();
+        move = monster.baseMoves[Random.Range(0, monster.baseMoves.Count)];
         ChangeActionState(ActionState.Acting);
       }
 
