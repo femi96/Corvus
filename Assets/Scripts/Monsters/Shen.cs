@@ -12,4 +12,13 @@ public class Shen : Monster {
   public override GameObject GetPrefab() {
     return MonsterPrefabs.instance.shenPrefab;
   }
+
+  public override void SetAttributes() {
+    foreach (Attribute attr in System.Enum.GetValues(typeof(Attribute)))
+      attributes[attr] = 3;
+
+    attributes[Attribute.Str] = 5;
+    attributes[Attribute.Vit] = 4;
+    attributes[Attribute.Rea] = 4;
+  }
 }

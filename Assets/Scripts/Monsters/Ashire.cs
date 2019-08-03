@@ -12,4 +12,13 @@ public class Ashire : Monster {
   public override GameObject GetPrefab() {
     return MonsterPrefabs.instance.ashirePrefab;
   }
+
+  public override void SetAttributes() {
+    foreach (Attribute attr in System.Enum.GetValues(typeof(Attribute)))
+      attributes[attr] = 3;
+
+    attributes[Attribute.Agi] = 5;
+    attributes[Attribute.Wis] = 4;
+    attributes[Attribute.Wil] = 4;
+  }
 }

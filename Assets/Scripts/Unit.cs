@@ -4,6 +4,8 @@ using UnityEngine;
 
 public enum ActionState { Wait, Dead, Moving, Acting };
 
+public enum DamageType { Physical, Magical, True };
+
 public class Unit : MonoBehaviour {
 
   public Board board;
@@ -13,11 +15,13 @@ public class Unit : MonoBehaviour {
   private Monster monster;
   private GameObject model;
 
-  public float health;
-  public float energy;
 
   public ActionState actionState;
   private float actionTime = 0;
+
+  // Unit stats
+  public int currentHealth;
+  public int currentEnergy;
 
   // Moving
   private const float moveDuration = 0.5f;
@@ -55,16 +59,83 @@ public class Unit : MonoBehaviour {
       board.clickSelection.OnClickUnit(this);
   }
 
-  public void DealDamage(float damage) {
-    float prehealth = health;
-    health = Mathf.Max(health - damage, 0);
+  public void DealDamage(float damage, DamageType type = DamageType.True,
+                         bool crit = false, float critDamage = 1f) {
 
-    Debug.Log("Unit takes " + damage + " damage. " + prehealth + " -> " + health);
+    // Crit
+    if (crit)
+      damage *= critDamage;
+
+    // Damage reduction from defense
+    float reduction = 1f;
+
+    if (type == DamageType.Physical)
+      reduction = 1f - 0.05f * monster.Endurance() / (1 + 0.05f * Mathf.Abs(monster.Endurance()));
+
+    if (type == DamageType.Magical)
+      reduction = 1f - 0.05f * monster.Resistance() / (1 + 0.05f * Mathf.Abs(monster.Resistance()));
+
+    damage *= reduction;
+
+    // Evasion
+    bool miss = Random.Range(0f, 1f) < Evasion();
+
+    if (miss)
+      damage = 0;
+
+    // Round damage
+    int roundedDamage = Mathf.RoundToInt(damage);
+
+    // Damage effect on health
+    int preHealth = currentHealth;
+    currentHealth = Mathf.Max(currentHealth - roundedDamage, 0);
+
+    if (miss)
+      Debug.Log("Miss!");
+    else if (crit)
+      Debug.Log("Crit! Unit takes " + roundedDamage + " " + type + " damage. " + preHealth + " -> " + currentHealth);
+    else
+      Debug.Log("Unit takes " + roundedDamage + " " + type + " damage. " + preHealth + " -> " + currentHealth);
+
     TryDead();
   }
 
+
+  public int GetAttribute(Attribute attr) {
+    return monster.attributes[attr];
+  }
+
+  public float MoveSpeed() {
+    return monster.MoveSpeed();
+  }
+
+  public float AttackSpeed() {
+    return monster.AttackSpeed();
+  }
+
+  public float Endurance() {
+    return monster.Endurance();
+  }
+
+  public float Resistance() {
+    return monster.Resistance();
+  }
+
+  public float Evasion() {
+    return monster.Evasion();
+  }
+
+  public float EnergyMod() {
+    return monster.EnergyMod();
+  }
+
+  public float CritMod() {
+    return monster.CritMod(); // TODO: Make this effected by status effects
+  }
+
+
   private void TryDead() {
-    if (health > 0)
+    if (currentHealth > 0)
       return;
 
     Debug.Log("Unit dies");
@@ -86,18 +157,17 @@ public class Unit : MonoBehaviour {
   }
 
   public void ResetUnit() {
-    health = 40;
-    energy = 0;
+    currentHealth = monster.MaxHealth();
+    currentEnergy = 0;
     actionState = ActionState.Wait;
   }
 
   public void ActionStep() {
     // Called by board when battle is on
 
-    actionTime += Time.deltaTime;
-
     switch (actionState) {
     case ActionState.Wait:
+      actionTime += Time.deltaTime;
 
       // Add AI to decide action when waiting
       if (Random.Range(0f, 1f) > 0.5f)
@@ -110,6 +180,7 @@ public class Unit : MonoBehaviour {
       break;
 
     case ActionState.Moving:
+      actionTime += Time.deltaTime * MoveSpeed();
       float i = Mathf.Min(actionTime / moveDuration, 1.0f);
       Vector3 tilePos = Vector3.Lerp(prevTile.transform.position, nextTile.transform.position, i);
       transform.position = tilePos + 0.75f * Vector3.up;
@@ -121,6 +192,7 @@ public class Unit : MonoBehaviour {
       break;
 
     case ActionState.Acting:
+      actionTime += Time.deltaTime * AttackSpeed();
       bool actingDone = move.Step(actionTime);
 
       if (actingDone)
@@ -130,6 +202,7 @@ public class Unit : MonoBehaviour {
 
     case ActionState.Dead:
     default:
+      actionTime += Time.deltaTime;
       return;
     }
 

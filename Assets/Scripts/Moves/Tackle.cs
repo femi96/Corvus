@@ -5,7 +5,6 @@ using UnityEngine;
 public class Tackle : Move {
 
   private const float actDuration = 1.5f;
-  private Unit user;
   private List<Unit> targetsHit;
   private Tile[] targetTiles;
 
@@ -44,12 +43,22 @@ public class Tackle : Move {
 
   private void OnHit(Unit unit) {
     if (user.team != unit.team && !targetsHit.Contains(unit)) {
-      unit.DealDamage(GetDamage());
+      bool crit = false;
+      float critDamage = user.CritMod();
+
+      if (Random.Range(0f, 1f) < CritChance() * user.CritMod())
+        crit = true;
+
+      unit.DealDamage(GetDamage(), DamageType.Physical, crit, critDamage);
       targetsHit.Add(unit);
     }
   }
 
   private float GetDamage() {
-    return 10 + user.energy;
+    return Damage() * user.GetAttribute(Attribute.Str);
   }
+
+  public override float Damage() { return 10f; }
+
+  public override float CritChance() { return 0.1f; }
 }

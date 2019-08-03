@@ -4,8 +4,20 @@ using UnityEngine;
 
 public abstract class Move {
 
+  public Unit user;
+
+  // Every setup must assign user
   public abstract void Setup(Unit unit);
 
-  // Return true when finished
+  // Return true when finished with move
   public abstract bool Step(float actionTime);
+
+
+  public abstract float Damage();
+
+  public abstract float CritChance();
+
+  public float GetCritChance() {
+    return CritChance() * user.CritMod();
+  }
 }
