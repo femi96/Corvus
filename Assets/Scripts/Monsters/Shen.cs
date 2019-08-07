@@ -7,6 +7,7 @@ public class Shen : Monster {
   public Shen() : base()  {
     baseMoves.Add(new Scratch());
     baseMoves.Add(new Tackle());
+    specMoves.Add(new ScratchSpecial());
   }
 
   public override GameObject GetPrefab() {

@@ -50,6 +50,7 @@ public class Tackle : Move {
         crit = true;
 
       unit.DealDamage(GetDamage(), DamageType.Physical, crit, critDamage);
+      user.currentEnergy += GetEnergyGain();
       targetsHit.Add(unit);
     }
   }
@@ -61,4 +62,8 @@ public class Tackle : Move {
   public override float Damage() { return 10f; }
 
   public override float CritChance() { return 0.1f; }
+
+  public override float EnergyGain() { return 10f; }
+
+  public override int EnergyCost() { return 0; }
 }

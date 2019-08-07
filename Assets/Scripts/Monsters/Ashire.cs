@@ -7,6 +7,7 @@ public class Ashire : Monster {
   public Ashire() : base()  {
     baseMoves.Add(new Scratch());
     baseMoves.Add(new Tackle());
+    specMoves.Add(new ScratchSpecial());
   }
 
   public override GameObject GetPrefab() {

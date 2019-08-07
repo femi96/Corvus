@@ -20,4 +20,12 @@ public abstract class Move {
   public float GetCritChance() {
     return CritChance() * user.CritMod();
   }
+
+  public abstract float EnergyGain();
+
+  public int GetEnergyGain() {
+    return Mathf.RoundToInt(EnergyGain() * user.EnergyMod());
+  }
+
+  public abstract int EnergyCost();
 }

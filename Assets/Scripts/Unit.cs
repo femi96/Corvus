@@ -66,6 +66,15 @@ public class Unit : MonoBehaviour {
     if (crit)
       damage *= critDamage;
 
+    // Evasion
+    bool miss = Random.Range(0f, 1f) < Evasion();
+
+    if (miss)
+      damage = 0;
+
+    // Damage effect on energy
+    currentEnergy += Mathf.RoundToInt(damage / 200f * EnergyMod());
+
     // Damage reduction from defense
     float reduction = 1f;
 
@@ -76,12 +85,6 @@ public class Unit : MonoBehaviour {
       reduction = 1f - 0.05f * monster.Resistance() / (1 + 0.05f * Mathf.Abs(monster.Resistance()));
 
     damage *= reduction;
-
-    // Evasion
-    bool miss = Random.Range(0f, 1f) < Evasion();
-
-    if (miss)
-      damage = 0;
 
     // Round damage
     int roundedDamage = Mathf.RoundToInt(damage);
@@ -97,6 +100,7 @@ public class Unit : MonoBehaviour {
     else
       Debug.Log("Unit takes " + roundedDamage + " " + type + " damage. " + preHealth + " -> " + currentHealth);
 
+    // Death check
     TryDead();
   }
 
@@ -173,7 +177,11 @@ public class Unit : MonoBehaviour {
       if (Random.Range(0f, 1f) > 0.5f)
         ChangeActionState(ActionState.Moving);
       else {
-        move = monster.baseMoves[Random.Range(0, monster.baseMoves.Count)];
+        if (currentEnergy > monster.specMoves[0].EnergyCost())
+          move = monster.specMoves[0];
+        else
+          move = monster.baseMoves[Random.Range(0, monster.baseMoves.Count)];
+
         ChangeActionState(ActionState.Acting);
       }
 
