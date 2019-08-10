@@ -73,7 +73,7 @@ public class ScratchSpecial : Move {
 
   public override float CritChance() { return 0.2f; }
 
-  public override float EnergyGain() { return 10f; }
+  public override float EnergyGain() { return 0; }
 
   public override int EnergyCost() { return 50; }
 }

@@ -143,10 +143,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   board: {fileID: 0}
   team: 0
-  health: 0
-  energy: 0
   actionState: 0
+  currentHealth: 0
+  currentEnergy: 0
   currentTile: {fileID: 0}
+  uiHover: {fileID: 0}
+  uiHealth: {fileID: 0}
 --- !u!135 &135713698128593370
 SphereCollider:
   m_ObjectHideFlags: 1

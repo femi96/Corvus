@@ -38,7 +38,7 @@ public class Tile : MonoBehaviour {
         neighbors.Add(tile);
     }
 
-    Debug.Log("Tile " + tileName + " neighbors gathered. Neighbor count: " + neighbors.Count);
+    // Debug.Log("Tile " + tileName + " neighbors gathered. Neighbor count: " + neighbors.Count);
   }
 
   void Update() {}

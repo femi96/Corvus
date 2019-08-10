@@ -27,7 +27,7 @@ public class Scratch : Move {
           GameObject effectGo = Unit.Instantiate(MovePrefabs.instance.scratchPrefab, MovePrefabs.container);
           effectGo.transform.position = user.transform.position;
           Vector3 vel = actTile.transform.position - user.currentTile.transform.position;
-          effectGo.GetComponent<EffectMover>().velocity = vel * 2f;
+          effectGo.GetComponent<EffectMover>().velocity = vel * 3f;
           effectGo.GetComponent<EffectDelegate>().methodToCall = OnHit;
           effectGo.GetComponent<Timeout>().duration = 0.5f * actDuration;
         }
@@ -50,7 +50,7 @@ public class Scratch : Move {
         crit = true;
 
       unit.DealDamage(GetDamage(), DamageType.Physical, crit, critDamage);
-      user.currentEnergy += GetEnergyGain();
+      user.currentEnergy += GetEnergyGain(); // TODO: Miss should not make mana
       targetsHit.Add(unit);
     }
   }

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public enum ActionState { Wait, Dead, Moving, Acting };
 
@@ -32,6 +33,14 @@ public class Unit : MonoBehaviour {
   // Acting
   private Move move;
 
+  // UI
+  [Header("UI")]
+  private GameObject uiHover;
+  private GameObject uiHealth;
+  private GameObject uiEnergy;
+  private List<GameObject> uiDamageText;
+  private Vector3 uiHoverOffset = new Vector3(0, 1.25f, 0);
+
   void Start() {
     if (Random.Range(0f, 1f) > 0.5f)
       monster = new Ashire();
@@ -40,10 +49,44 @@ public class Unit : MonoBehaviour {
 
     ResetModel();
     ResetUnit();
+
+    uiHover = Instantiate(UIPrefabs.instance.hoverPrefab, UIPrefabs.instance.canvasTransform);
+    uiHealth = uiHover.transform.Find("Health").gameObject;
+    uiEnergy = uiHover.transform.Find("Energy").gameObject;
+    uiDamageText = new List<GameObject>();
   }
 
   void Update() {
 
+  }
+
+  void LateUpdate() {
+    UpdateUI();
+  }
+
+  private void UpdateUI() {
+    float healthPercent = 100f * currentHealth / monster.MaxHealth();
+    float energyPercent = 100f * currentEnergy / 100f;
+    Vector3 pos = transform.position + uiHoverOffset;
+    uiHealth.GetComponent<RectTransform>().sizeDelta = new Vector2(healthPercent, 20);
+    uiEnergy.GetComponent<RectTransform>().sizeDelta = new Vector2(energyPercent, 20);
+    uiHover.transform.position = RectTransformUtility.WorldToScreenPoint(Camera.main, pos);
+
+    if (team == 0)
+      uiHealth.GetComponent<Image>().color = Color.green;
+    else
+      uiHealth.GetComponent<Image>().color = Color.red;
+
+    // Remove nulls
+    for (var i = uiDamageText.Count - 1; i > -1; i--)
+      if (uiDamageText[i] == null)
+        uiDamageText.RemoveAt(i);
+
+    foreach (GameObject go in uiDamageText) {
+      pos = go.GetComponent<TextEffectMover>().position;
+      pos += transform.position;
+      go.transform.position = RectTransformUtility.WorldToScreenPoint(Camera.main, pos);
+    }
   }
 
   private void ResetModel() {
@@ -67,7 +110,7 @@ public class Unit : MonoBehaviour {
       damage *= critDamage;
 
     // Evasion
-    bool miss = Random.Range(0f, 1f) < Evasion();
+    bool miss = Random.Range(0f, 1f) < Evasion() / 100f;
 
     if (miss)
       damage = 0;
@@ -93,12 +136,26 @@ public class Unit : MonoBehaviour {
     int preHealth = currentHealth;
     currentHealth = Mathf.Max(currentHealth - roundedDamage, 0);
 
-    if (miss)
+    // Effects
+    GameObject go = Instantiate(UIPrefabs.instance.textPrefab, UIPrefabs.instance.canvasTransform);
+    Text txt = go.transform.Find("Text").gameObject.GetComponent<Text>();
+    uiDamageText.Add(go);
+
+    TextEffectMover em = go.GetComponent<TextEffectMover>();
+    Vector3 rand = new Vector3(Random.Range(0.1f, 1f), 0f, 0f);
+    rand = rand * (Random.Range(0, 2) * 2 - 1);
+    em.velocity += rand;
+
+    if (miss) {
+      txt.text = "Miss";
       Debug.Log("Miss!");
-    else if (crit)
+    } else if (crit) {
+      txt.text = roundedDamage + "!";
       Debug.Log("Crit! Unit takes " + roundedDamage + " " + type + " damage. " + preHealth + " -> " + currentHealth);
-    else
+    } else {
+      txt.text = roundedDamage + "";
       Debug.Log("Unit takes " + roundedDamage + " " + type + " damage. " + preHealth + " -> " + currentHealth);
+    }
 
     // Death check
     TryDead();
