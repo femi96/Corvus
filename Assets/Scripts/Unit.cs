@@ -13,7 +13,7 @@ public class Unit : MonoBehaviour {
 
   public int team = 0;
 
-  private Monster monster;
+  public Monster monster;
   private GameObject model;
 
 
@@ -65,6 +65,8 @@ public class Unit : MonoBehaviour {
   }
 
   private void UpdateUI() {
+    uiHover.SetActive(IsAlive());
+
     float healthPercent = 100f * currentHealth / monster.MaxHealth();
     float energyPercent = 100f * currentEnergy / 100f;
     Vector3 pos = transform.position + uiHoverOffset;
@@ -110,13 +112,13 @@ public class Unit : MonoBehaviour {
       damage *= critDamage;
 
     // Evasion
-    bool miss = Random.Range(0f, 1f) < Evasion() / 100f;
+    bool miss = Random.Range(0f, 1f) < monster.Evasion() / 100f;
 
     if (miss)
       damage = 0;
 
     // Damage effect on energy
-    currentEnergy += Mathf.RoundToInt(damage / 200f * EnergyMod());
+    currentEnergy += Mathf.RoundToInt(damage / 200f * monster.EnergyMod());
 
     // Damage reduction from defense
     float reduction = 1f;
@@ -133,7 +135,7 @@ public class Unit : MonoBehaviour {
     int roundedDamage = Mathf.RoundToInt(damage);
 
     // Damage effect on health
-    int preHealth = currentHealth;
+    // int preHealth = currentHealth;
     currentHealth = Mathf.Max(currentHealth - roundedDamage, 0);
 
     // Effects
@@ -148,50 +150,17 @@ public class Unit : MonoBehaviour {
 
     if (miss) {
       txt.text = "Miss";
-      Debug.Log("Miss!");
+      // Debug.Log("Miss!");
     } else if (crit) {
       txt.text = roundedDamage + "!";
-      Debug.Log("Crit! Unit takes " + roundedDamage + " " + type + " damage. " + preHealth + " -> " + currentHealth);
+      // Debug.Log("Crit! Unit takes " + roundedDamage + " " + type + " damage. " + preHealth + " -> " + currentHealth);
     } else {
       txt.text = roundedDamage + "";
-      Debug.Log("Unit takes " + roundedDamage + " " + type + " damage. " + preHealth + " -> " + currentHealth);
+      // Debug.Log("Unit takes " + roundedDamage + " " + type + " damage. " + preHealth + " -> " + currentHealth);
     }
 
     // Death check
     TryDead();
-  }
-
-
-  public int GetAttribute(Attribute attr) {
-    return monster.attributes[attr];
-  }
-
-  public float MoveSpeed() {
-    return monster.MoveSpeed();
-  }
-
-  public float AttackSpeed() {
-    return monster.AttackSpeed();
-  }
-
-  public float Endurance() {
-    return monster.Endurance();
-  }
-
-  public float Resistance() {
-    return monster.Resistance();
-  }
-
-  public float Evasion() {
-    return monster.Evasion();
-  }
-
-  public float EnergyMod() {
-    return monster.EnergyMod();
-  }
-
-  public float CritMod() {
-    return monster.CritMod(); // TODO: Make this effected by status effects
   }
 
 
@@ -245,7 +214,7 @@ public class Unit : MonoBehaviour {
       break;
 
     case ActionState.Moving:
-      actionTime += Time.deltaTime * MoveSpeed();
+      actionTime += Time.deltaTime * monster.MoveSpeed();
       float i = Mathf.Min(actionTime / moveDuration, 1.0f);
       Vector3 tilePos = Vector3.Lerp(prevTile.transform.position, nextTile.transform.position, i);
       transform.position = tilePos + 0.75f * Vector3.up;
@@ -257,7 +226,7 @@ public class Unit : MonoBehaviour {
       break;
 
     case ActionState.Acting:
-      actionTime += Time.deltaTime * AttackSpeed();
+      actionTime += Time.deltaTime * monster.AttackSpeed();
       bool actingDone = move.Step(actionTime);
 
       if (actingDone)

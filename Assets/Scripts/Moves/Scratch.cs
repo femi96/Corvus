@@ -44,9 +44,9 @@ public class Scratch : Move {
   private void OnHit(Unit unit) {
     if (user.team != unit.team && !targetsHit.Contains(unit)) {
       bool crit = false;
-      float critDamage = user.CritMod();
+      float critDamage = user.monster.CritMod();
 
-      if (Random.Range(0f, 1f) < CritChance() * user.CritMod())
+      if (Random.Range(0f, 1f) < GetCritChance())
         crit = true;
 
       unit.DealDamage(GetDamage(), DamageType.Physical, crit, critDamage);
@@ -56,7 +56,7 @@ public class Scratch : Move {
   }
 
   private float GetDamage() {
-    return Damage() * user.GetAttribute(Attribute.Agi);
+    return Damage() * user.monster.GetAttribute(Attribute.Agi);
   }
 
   public override float Damage() { return 10f; }

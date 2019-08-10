@@ -8,6 +8,7 @@ public class MovePrefabs : MonoBehaviour {
   public static Transform container;
 
   public GameObject scratchPrefab;
+  public GameObject bangPrefab;
 
   void Awake() {
     instance = this;

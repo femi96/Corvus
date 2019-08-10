@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum Attribute { Str, Agi, Wis, Rea, Vit, Wil };
+public enum Attribute { Str, Agi, Wis, Vit, Rea, Wil };
 
 public abstract class Monster {
 
@@ -19,6 +19,8 @@ public abstract class Monster {
     attributes = new Dictionary<Attribute, int>();
     SetAttributes();
   }
+
+  public abstract string GetName();
 
   public abstract GameObject GetPrefab();
 

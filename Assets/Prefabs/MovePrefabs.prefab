@@ -55,6 +55,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   scratchPrefab: {fileID: 1011939524647870, guid: 63f37073c6949cf4fa4b8a4717abf09c,
     type: 2}
+  bangPrefab: {fileID: 1011939524647870, guid: 6715a000629fa6a45bfff4a5fbcb2ed7, type: 2}
 --- !u!114 &114325337429461572
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ScratchSpecial : Move {
+public class Bang : Move {
 
-  private const float actDuration = 0.5f;
+  private const float actDuration = 1.5f;
   private List<Unit> targetsHit;
   private Tile[] targetTiles;
 
@@ -34,10 +34,10 @@ public class ScratchSpecial : Move {
       foreach (Tile actTile in targetTiles) {
         if (!effectHappened) {
           effectHappened = true;
-          GameObject effectGo = Unit.Instantiate(MovePrefabs.instance.scratchPrefab, MovePrefabs.container);
+          GameObject effectGo = Unit.Instantiate(MovePrefabs.instance.bangPrefab, MovePrefabs.container);
           effectGo.transform.position = user.transform.position;
           Vector3 vel = actTile.transform.position - user.currentTile.transform.position;
-          effectGo.GetComponent<EffectMover>().velocity = vel * 8f;
+          effectGo.GetComponent<EffectMover>().velocity = vel * 2f;
           effectGo.GetComponent<EffectDelegate>().methodToCall = OnHit;
           effectGo.GetComponent<Timeout>().duration = 0.5f * actDuration;
         }
@@ -54,9 +54,9 @@ public class ScratchSpecial : Move {
   private void OnHit(Unit unit) {
     if (user.team != unit.team && !targetsHit.Contains(unit)) {
       bool crit = false;
-      float critDamage = user.CritMod();
+      float critDamage = user.monster.CritMod();
 
-      if (Random.Range(0f, 1f) < CritChance() * user.CritMod())
+      if (Random.Range(0f, 1f) < GetCritChance())
         crit = true;
 
       unit.DealDamage(GetDamage(), DamageType.Physical, crit, critDamage);
@@ -66,7 +66,7 @@ public class ScratchSpecial : Move {
   }
 
   private float GetDamage() {
-    return Damage() * user.GetAttribute(Attribute.Agi);
+    return Damage() * user.monster.GetAttribute(Attribute.Wis);
   }
 
   public override float Damage() { return 40f; }
