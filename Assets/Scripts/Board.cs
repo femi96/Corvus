@@ -83,7 +83,7 @@ public class Board : MonoBehaviour {
 
     // Call effects that take place during battle
     foreach (Unit unit in units) {
-      unit.ActionStep();
+      unit.BattleTimeStep();
     }
 
     TryBattleDone();

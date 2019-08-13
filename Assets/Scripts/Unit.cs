@@ -1,7 +1,9 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+
+public enum GoalState { None, BasicAttack, SpecialAttack };
 
 public enum ActionState { Wait, Dead, Moving, Acting };
 
@@ -17,12 +19,28 @@ public class Unit : MonoBehaviour {
   private GameObject model;
 
 
-  public ActionState actionState;
-  private float actionTime = 0;
-
   // Unit stats
   public int currentHealth;
   public int currentEnergy;
+
+
+  /* Unit AI is broken into to layers:
+    High level goal layer & low level action layer
+    */
+
+  [Header("AI")]
+  // Goal
+  public GoalState goalState;
+  private float blockedGoalTimer = 0;
+  private bool goalDone = false;
+
+  // Basic Attack Monster
+  public Unit attackTarget;
+
+
+  // Actions
+  public ActionState actionState;
+  private float actionTime = 0;
 
   // Moving
   private const float moveDuration = 0.5f;
@@ -132,7 +150,7 @@ public class Unit : MonoBehaviour {
     damage *= reduction;
 
     // Round damage
-    int roundedDamage = Mathf.RoundToInt(damage);
+    int roundedDamage = Mathf.RoundToInt(damage / 10);
 
     // Damage effect on health
     // int preHealth = currentHealth;
@@ -189,26 +207,52 @@ public class Unit : MonoBehaviour {
   public void ResetUnit() {
     currentHealth = monster.MaxHealth();
     currentEnergy = 0;
+    goalState = GoalState.None;
     actionState = ActionState.Wait;
   }
 
-  public void ActionStep() {
+  public void BattleTimeStep() {
     // Called by board when battle is on
+
+    // If goal blocked, remove goal
+    // If no goal, set new goal
+    //  Special attack if mana for next special
+    //  Basic attack
+    // If no action, set action based on goal
+    //  If action cannot be set, mark goal as blocked
+
+
+    if (blockedGoalTimer >= 0.1f)
+      goalState = GoalState.None;
+
+    if (goalState == GoalState.None) {
+      // Assign new goal
+      blockedGoalTimer = 0;
+
+      if (TryNewGoalSpecial() || TryNewGoalAttack()) {
+      } else {
+        return;
+      }
+    }
 
     switch (actionState) {
     case ActionState.Wait:
       actionTime += Time.deltaTime;
 
-      // Add AI to decide action when waiting
-      if (Random.Range(0f, 1f) > 0.5f)
-        ChangeActionState(ActionState.Moving);
-      else {
-        if (currentEnergy > monster.specMoves[0].EnergyCost())
-          move = monster.specMoves[0];
-        else
-          move = monster.baseMoves[Random.Range(0, monster.baseMoves.Count)];
+      if (goalDone)
+        goalState = GoalState.None;
 
-        ChangeActionState(ActionState.Acting);
+      switch (goalState) {
+      case GoalState.BasicAttack:
+        NewActionForGoalAttack();
+        break;
+
+      case GoalState.SpecialAttack:
+        NewActionForGoalSpecial();
+        break;
+
+      default:
+        return;
       }
 
       break;
@@ -239,7 +283,6 @@ public class Unit : MonoBehaviour {
       actionTime += Time.deltaTime;
       return;
     }
-
   }
 
   private void ChangeActionState(ActionState state) {
@@ -276,4 +319,109 @@ public class Unit : MonoBehaviour {
       return;
     }
   }
+
+  private bool TryNewGoalSpecial() {
+    // TODO: Per Move unit prioritization
+    // TODO: Alternate through special moves
+    if (currentEnergy < monster.specMoves[0].EnergyCost())
+      return false;
+
+    goalState = GoalState.SpecialAttack;
+    goalDone = false;
+
+    float minHp = 1000f;
+
+    foreach (Unit unit in board.units) {
+      float hp = unit.currentHealth / (float)unit.monster.MaxHealth();
+
+      if (unit.team != team && unit.IsAlive() && hp <= minHp) {
+        attackTarget = unit;
+        minHp = hp;
+      }
+    }
+
+    return true;
+  }
+
+  private bool TryNewGoalAttack() {
+    if (monster.baseMoves.Count == 0)
+      return false;
+
+    goalState = GoalState.BasicAttack;
+    goalDone = false;
+
+    float minDist = 1000f;
+
+    foreach (Unit unit in board.units) {
+      float dist = currentTile.DistanceTo(unit.currentTile);
+
+      if (unit.team != team && unit.IsAlive() && dist <= minDist) {
+        attackTarget = unit;
+        minDist = dist;
+      }
+    }
+
+    return true;
+  }
+
+  private void NewActionForGoalAttack() {
+    // If in range, attack, otherwise get in range
+
+    // get base moves
+    // filter moves by if distance is within range
+    float targetDistance = currentTile.DistanceTo(attackTarget.currentTile);
+
+    List<Move> movesInRange = new List<Move>();
+
+    foreach (Move m in monster.baseMoves) {
+      if (m.Range() >= targetDistance)
+        movesInRange.Add(m);
+    }
+
+    // if moves remaining (in range), use a random move
+    if (movesInRange.Count > 0) {
+      move = movesInRange[Random.Range(0, movesInRange.Count)];
+      ChangeActionState(ActionState.Acting);
+      goalDone = true;
+      return;
+    }
+
+    // if no moves, get all tiles in range from target
+    // Route to nearest tile in range
+    ChangeActionState(ActionState.Moving);
+  }
+
+  private void NewActionForGoalSpecial() {
+    // If in range, attack, otherwise get in range
+
+    float targetDistance = currentTile.DistanceTo(attackTarget.currentTile);
+
+    // if move (in range), use move
+    if (monster.specMoves[0].Range() >= targetDistance) {
+      move = monster.specMoves[0];
+      ChangeActionState(ActionState.Acting);
+      goalDone = true;
+      return;
+    }
+
+    // if no moves, get all tiles in range from target
+    // Route to nearest tile in range
+    // TODO: Pathing
+    ChangeActionState(ActionState.Moving);
+  }
+
+  // private void NewActionForGoalAttack() {
+
+  //   // Go to unit if not near, if near attack
+  //   if (Random.Range(0f, 1f) > 0.5f)
+  //     ChangeActionState(ActionState.Moving);
+  //   else {
+  //     if (currentEnergy > monster.specMoves[0].EnergyCost())
+  //       move = monster.specMoves[0];
+  //     else
+  //       move = monster.baseMoves[Random.Range(0, monster.baseMoves.Count)];
+
+  //     ChangeActionState(ActionState.Acting);
+  //   }
+  // }
 }

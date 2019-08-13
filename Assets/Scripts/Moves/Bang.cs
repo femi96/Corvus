@@ -13,7 +13,7 @@ public class Bang : Move {
 
   public override void Setup(Unit unit) {
     user = unit;
-    targetTiles = new Tile[] { user.currentTile.neighbors[Random.Range(0, user.currentTile.neighbors.Count)] };
+    targetTiles = new Tile[] { user.attackTarget.currentTile };
     targetsHit = new List<Unit>();
     energyPaid = false;
     effectHappened = false;
@@ -68,6 +68,8 @@ public class Bang : Move {
   private float GetDamage() {
     return Damage() * user.monster.GetAttribute(Attribute.Wis);
   }
+
+  public override float Range() { return 5; }
 
   public override float Damage() { return 40f; }
 

@@ -13,6 +13,8 @@ public abstract class Move {
   public abstract bool Step(float actionTime);
 
 
+  public abstract float Range();
+
   public abstract float Damage();
 
   public abstract float CritChance();

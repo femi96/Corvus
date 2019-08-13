@@ -12,7 +12,7 @@ public class Tackle : Move {
 
   public override void Setup(Unit unit) {
     user = unit;
-    targetTiles = new Tile[] { user.currentTile.neighbors[Random.Range(0, user.currentTile.neighbors.Count)] };
+    targetTiles = new Tile[] { user.attackTarget.currentTile };
     targetsHit = new List<Unit>();
     effectHappened = false;
   }
@@ -58,6 +58,8 @@ public class Tackle : Move {
   private float GetDamage() {
     return Damage() * user.monster.GetAttribute(Attribute.Str);
   }
+
+  public override float Range() { return 2f; }
 
   public override float Damage() { return 10f; }
 

@@ -12,7 +12,7 @@ public class Scratch : Move {
 
   public override void Setup(Unit unit) {
     user = unit;
-    targetTiles = new Tile[] { user.currentTile.neighbors[Random.Range(0, user.currentTile.neighbors.Count)] };
+    targetTiles = new Tile[] { user.attackTarget.currentTile };
     targetsHit = new List<Unit>();
     effectHappened = false;
   }
@@ -49,6 +49,7 @@ public class Scratch : Move {
       if (Random.Range(0f, 1f) < GetCritChance())
         crit = true;
 
+      // TODO: Add standard "ApplyDamage" helper in move to auto include energy crit etc.
       unit.DealDamage(GetDamage(), DamageType.Physical, crit, critDamage);
       user.currentEnergy += GetEnergyGain(); // TODO: Miss should not make mana
       targetsHit.Add(unit);
@@ -58,6 +59,8 @@ public class Scratch : Move {
   private float GetDamage() {
     return Damage() * user.monster.GetAttribute(Attribute.Agi);
   }
+
+  public override float Range() { return 2f; }
 
   public override float Damage() { return 10f; }
 

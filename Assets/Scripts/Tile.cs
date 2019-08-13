@@ -41,5 +41,9 @@ public class Tile : MonoBehaviour {
     // Debug.Log("Tile " + tileName + " neighbors gathered. Neighbor count: " + neighbors.Count);
   }
 
+  public float DistanceTo(Tile other) {
+    return (transform.position - other.transform.position).magnitude;
+  }
+
   void Update() {}
 }
