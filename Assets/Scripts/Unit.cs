@@ -93,9 +93,9 @@ public class Unit : MonoBehaviour {
     uiHover.transform.position = RectTransformUtility.WorldToScreenPoint(Camera.main, pos);
 
     if (team == 0)
-      uiHealth.GetComponent<Image>().color = Color.green;
+      uiHealth.GetComponent<Image>().color = UIColor.Ally();
     else
-      uiHealth.GetComponent<Image>().color = Color.red;
+      uiHealth.GetComponent<Image>().color = UIColor.Enemy();
 
     // Remove nulls
     for (var i = uiDamageText.Count - 1; i > -1; i--)

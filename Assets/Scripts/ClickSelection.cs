@@ -83,15 +83,14 @@ public class ClickSelection : MonoBehaviour {
     nameText.text = selectedUnit.monster.GetName();
     int team = (selectedUnit.team == 0) ? 1 : 0;
 
-    teamImage.color = 0.75f * Color.white +
-                      0.25f * (team * Color.green + (1 - team) * Color.red);
+    teamImage.color = team * UIColor.AllyLight() + (1 - team) * UIColor.EnemyLight();
 
 
     // Health
     float healthWidth = 360f * selectedUnit.currentHealth / selectedUnit.monster.MaxHealth();
     health.GetComponent<RectTransform>().sizeDelta = new Vector2(healthWidth, 40);
     healthText.text = selectedUnit.currentHealth + " / " + selectedUnit.monster.MaxHealth();
-    healthImage.color = (team * Color.green + (1 - team) * Color.red);;
+    healthImage.color = team * UIColor.Ally() + (1 - team) * UIColor.Enemy();
 
     // Energy
     float energyWidth = 360f * selectedUnit.currentEnergy / 100f;
