@@ -40,12 +40,12 @@ public abstract class Monster {
 
   public float MoveSpeed() {
     return 1f +
-           0.1f * attributes[Attribute.Rea];
+           0.05f * attributes[Attribute.Rea];
   }
 
   public float AttackSpeed() {
     return 1f +
-           0.1f * attributes[Attribute.Agi];
+           0.05f * attributes[Attribute.Agi];
   }
 
   public float Endurance() {

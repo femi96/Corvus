@@ -29,13 +29,13 @@ public class Unit : MonoBehaviour {
     */
 
   [Header("AI")]
-  // Goal
+  // Goals
   public GoalState goalState;
   private float blockedGoalTimer = 0;
   private bool goalDone = false;
 
-  // Basic Attack Monster
   public Unit attackTarget;
+  public int specialMoveCount;
 
 
   // Actions
@@ -207,6 +207,7 @@ public class Unit : MonoBehaviour {
   public void ResetUnit() {
     currentHealth = monster.MaxHealth();
     currentEnergy = 0;
+    specialMoveCount = -1;
     goalState = GoalState.None;
     actionState = ActionState.Wait;
   }
@@ -323,8 +324,12 @@ public class Unit : MonoBehaviour {
   private bool TryNewGoalSpecial() {
     // TODO: Per Move unit prioritization
     // TODO: Alternate through special moves
-    if (currentEnergy < monster.specMoves[0].EnergyCost())
+    int newCount = (specialMoveCount + 1) % monster.specMoves.Count;
+
+    if (monster.specMoves.Count == 0 || currentEnergy < monster.specMoves[newCount].EnergyCost())
       return false;
+
+    specialMoveCount = newCount;
 
     goalState = GoalState.SpecialAttack;
     goalDone = false;
@@ -397,8 +402,8 @@ public class Unit : MonoBehaviour {
     float targetDistance = currentTile.DistanceTo(attackTarget.currentTile);
 
     // if move (in range), use move
-    if (monster.specMoves[0].Range() >= targetDistance) {
-      move = monster.specMoves[0];
+    if (monster.specMoves[specialMoveCount].Range() >= targetDistance) {
+      move = monster.specMoves[specialMoveCount];
       ChangeActionState(ActionState.Acting);
       goalDone = true;
       return;

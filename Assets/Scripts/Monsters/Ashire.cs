@@ -8,6 +8,7 @@ public class Ashire : Monster {
     baseMoves.Add(new Scratch());
     baseMoves.Add(new Tackle());
     specMoves.Add(new Bang());
+    specMoves.Add(new Pierce());
   }
 
   public override string GetName() {

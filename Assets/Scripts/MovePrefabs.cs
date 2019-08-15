@@ -9,6 +9,7 @@ public class MovePrefabs : MonoBehaviour {
 
   public GameObject scratchPrefab;
   public GameObject bangPrefab;
+  public GameObject piercePrefab;
 
   void Awake() {
     instance = this;

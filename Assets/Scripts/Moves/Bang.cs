@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Bang : Move {
 
-  private const float actDuration = 1.5f;
+  private const float actDuration = 1f;
   private List<Unit> targetsHit;
   private Tile[] targetTiles;
 
@@ -37,7 +37,7 @@ public class Bang : Move {
           GameObject effectGo = Unit.Instantiate(MovePrefabs.instance.bangPrefab, MovePrefabs.container);
           effectGo.transform.position = user.transform.position;
           Vector3 vel = actTile.transform.position - user.currentTile.transform.position;
-          effectGo.GetComponent<EffectMover>().velocity = vel * 2f;
+          effectGo.GetComponent<EffectMover>().velocity = vel * 0f;
           effectGo.GetComponent<EffectDelegate>().methodToCall = OnHit;
           effectGo.GetComponent<Timeout>().duration = 0.5f * actDuration;
         }

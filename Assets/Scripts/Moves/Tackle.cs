@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Tackle : Move {
 
-  private const float actDuration = 1.5f;
+  private const float actDuration = 1f;
   private List<Unit> targetsHit;
   private Tile[] targetTiles;
 

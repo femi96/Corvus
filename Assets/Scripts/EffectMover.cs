@@ -7,5 +7,8 @@ public class EffectMover : MonoBehaviour {
 
   void Update() {
     transform.position += velocity * Time.deltaTime;
+
+    if (velocity.magnitude > 0)
+      transform.rotation = Quaternion.LookRotation(velocity);
   }
 }
