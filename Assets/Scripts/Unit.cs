@@ -31,12 +31,8 @@ public class Unit : MonoBehaviour {
   [Header("AI")]
   // Goals
   public GoalState goalState;
-  private float blockedGoalTimer = 0;
-  private bool goalDone = false;
-
   public Unit attackTarget;
   public int specialMoveCount;
-
 
   // Actions
   public ActionState actionState;
@@ -150,7 +146,7 @@ public class Unit : MonoBehaviour {
     damage *= reduction;
 
     // Round damage
-    int roundedDamage = Mathf.RoundToInt(damage / 10);
+    int roundedDamage = Mathf.RoundToInt(damage / 4);
 
     // Damage effect on health
     // int preHealth = currentHealth;
@@ -222,26 +218,16 @@ public class Unit : MonoBehaviour {
     // If no action, set action based on goal
     //  If action cannot be set, mark goal as blocked
 
+    switch (actionState) {
+    case ActionState.Wait:
+      actionTime += Time.deltaTime;
 
-    if (blockedGoalTimer >= 0.1f)
       goalState = GoalState.None;
-
-    if (goalState == GoalState.None) {
-      // Assign new goal
-      blockedGoalTimer = 0;
 
       if (TryNewGoalSpecial() || TryNewGoalAttack()) {
       } else {
         return;
       }
-    }
-
-    switch (actionState) {
-    case ActionState.Wait:
-      actionTime += Time.deltaTime;
-
-      if (goalDone)
-        goalState = GoalState.None;
 
       switch (goalState) {
       case GoalState.BasicAttack:
@@ -292,8 +278,6 @@ public class Unit : MonoBehaviour {
 
     switch (actionState) {
     case ActionState.Moving:
-      // find new destination
-      nextTile = currentTile.neighbors[Random.Range(0, currentTile.neighbors.Count)];
       prevTile = currentTile;
 
       if (nextTile.unit == null) {
@@ -332,7 +316,6 @@ public class Unit : MonoBehaviour {
     specialMoveCount = newCount;
 
     goalState = GoalState.SpecialAttack;
-    goalDone = false;
 
     float minHp = 1000f;
 
@@ -353,7 +336,6 @@ public class Unit : MonoBehaviour {
       return false;
 
     goalState = GoalState.BasicAttack;
-    goalDone = false;
 
     float minDist = 1000f;
 
@@ -377,22 +359,33 @@ public class Unit : MonoBehaviour {
     float targetDistance = currentTile.DistanceTo(attackTarget.currentTile);
 
     List<Move> movesInRange = new List<Move>();
+    float maxRange = 0f;
 
     foreach (Move m in monster.baseMoves) {
       if (m.Range() >= targetDistance)
         movesInRange.Add(m);
+
+      maxRange = Mathf.Max(maxRange, m.Range());
     }
 
     // if moves remaining (in range), use a random move
     if (movesInRange.Count > 0) {
       move = movesInRange[Random.Range(0, movesInRange.Count)];
       ChangeActionState(ActionState.Acting);
-      goalDone = true;
       return;
     }
 
     // if no moves, get all tiles in range from target
     // Route to nearest tile in range
+    List<Tile> tilesInRange = board.GetTilesInRange(attackTarget.currentTile, maxRange);
+    List<Tile> pathToTile = board.GetShortestPathTo(currentTile, tilesInRange);
+
+    if (pathToTile.Count > 0) {
+      nextTile = pathToTile[0];
+    } else {
+      nextTile = currentTile.neighbors[Random.Range(0, currentTile.neighbors.Count)];
+    }
+
     ChangeActionState(ActionState.Moving);
   }
 
@@ -400,33 +393,26 @@ public class Unit : MonoBehaviour {
     // If in range, attack, otherwise get in range
 
     float targetDistance = currentTile.DistanceTo(attackTarget.currentTile);
+    float range = monster.specMoves[specialMoveCount].Range();
 
     // if move (in range), use move
-    if (monster.specMoves[specialMoveCount].Range() >= targetDistance) {
+    if (range >= targetDistance) {
       move = monster.specMoves[specialMoveCount];
       ChangeActionState(ActionState.Acting);
-      goalDone = true;
       return;
     }
 
     // if no moves, get all tiles in range from target
     // Route to nearest tile in range
-    // TODO: Pathing
+    List<Tile> tilesInRange = board.GetTilesInRange(attackTarget.currentTile, range);
+    List<Tile> pathToTile = board.GetShortestPathTo(currentTile, tilesInRange);
+
+    if (pathToTile.Count > 0) {
+      nextTile = pathToTile[0];
+    } else {
+      nextTile = currentTile.neighbors[Random.Range(0, currentTile.neighbors.Count)];
+    }
+
     ChangeActionState(ActionState.Moving);
   }
-
-  // private void NewActionForGoalAttack() {
-
-  //   // Go to unit if not near, if near attack
-  //   if (Random.Range(0f, 1f) > 0.5f)
-  //     ChangeActionState(ActionState.Moving);
-  //   else {
-  //     if (currentEnergy > monster.specMoves[0].EnergyCost())
-  //       move = monster.specMoves[0];
-  //     else
-  //       move = monster.baseMoves[Random.Range(0, monster.baseMoves.Count)];
-
-  //     ChangeActionState(ActionState.Acting);
-  //   }
-  // }
 }

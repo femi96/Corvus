@@ -106,4 +106,42 @@ public class Board : MonoBehaviour {
         StartBattle();
     }
   }
+
+  public List<Tile> GetTilesInRange(Tile centerTile, float range) {
+    Vector3 pos = centerTile.transform.position;
+    List<Tile> tilesInRange = new List<Tile>();
+
+    foreach (Tile tile in tiles)
+      if ((tile.transform.position - pos).magnitude <= range)
+        tilesInRange.Add(tile);
+
+    return tilesInRange;
+  }
+
+  public List<Tile> GetShortestPathTo(Tile srcTile, List<Tile> dstTiles) {
+    Tile curTile = srcTile;
+    Queue<Tile> frontier = new Queue<Tile>();
+    Dictionary<Tile, List<Tile>> paths = new Dictionary<Tile, List<Tile>>();
+
+    frontier.Enqueue(curTile);
+    paths.Add(curTile, new List<Tile>());
+
+    while (frontier.Count > 0) {
+      curTile = frontier.Dequeue();
+
+      foreach (Tile nextTile in curTile.neighbors) {
+        if (!paths.ContainsKey(nextTile) && nextTile.unit == null) {
+          frontier.Enqueue(nextTile);
+          List<Tile> nextPath = new List<Tile>(paths[curTile]);
+          nextPath.Add(nextTile);
+          paths.Add(nextTile, nextPath);
+
+          if (dstTiles.Contains(nextTile))
+            return paths[nextTile];
+        }
+      }
+    }
+
+    return paths[srcTile];
+  }
 }
