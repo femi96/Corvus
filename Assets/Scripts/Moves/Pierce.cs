@@ -47,7 +47,7 @@ public class Pierce : Move {
 
   private void OnHit(Unit unit) {
     if (user.team != unit.team && !targetsHit.Contains(unit)) {
-      StandardDamage(this, user, unit, DamageType.Physical);
+      StandardDamage(this, user, unit, DamageType.True);
       targetsHit.Add(unit);
     }
   }

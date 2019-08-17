@@ -87,6 +87,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ally: {r: 0.38966364, g: 0.8773585, b: 0.3600481, a: 1}
   enemy: {r: 0.8867924, g: 0.32208967, b: 0.5263042, a: 1}
+  damPhy: {r: 1, g: 0.54901963, b: 0.20392157, a: 1}
+  damMag: {r: 0, g: 0.6901961, b: 0.9411765, a: 1}
+  damTrue: {r: 0.9433962, g: 0.88615245, b: 0.6363475, a: 1}
+  damMiss: {r: 0.8301887, g: 0.8301887, b: 0.8301887, a: 1}
 --- !u!114 &114650478391623408
 MonoBehaviour:
   m_ObjectHideFlags: 1

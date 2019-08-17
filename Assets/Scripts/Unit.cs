@@ -152,8 +152,18 @@ public class Unit : MonoBehaviour {
     rand = rand * (Random.Range(0, 2) * 2 - 1);
     em.velocity += rand;
 
+    if (type == DamageType.Physical)
+      txt.color = UIColor.DamagePhysical();
+
+    if (type == DamageType.Magical)
+      txt.color = UIColor.DamageMagical();
+
+    if (type == DamageType.True)
+      txt.color = UIColor.DamageTrue();
+
     if (miss) {
       txt.text = "Miss";
+      txt.color = UIColor.DamageMiss();
       // Debug.Log("Miss!");
     } else if (crit) {
       txt.text = roundedDamage + "!";
