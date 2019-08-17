@@ -43,20 +43,12 @@ public class Scratch : Move {
 
   private void OnHit(Unit unit) {
     if (user.team != unit.team && !targetsHit.Contains(unit)) {
-      bool crit = false;
-      float critDamage = user.monster.CritMod();
-
-      if (Random.Range(0f, 1f) < GetCritChance())
-        crit = true;
-
-      // TODO: Add standard "ApplyDamage" helper in move to auto include energy crit etc.
-      unit.DealDamage(GetDamage(), DamageType.Physical, crit, critDamage);
-      user.currentEnergy += GetEnergyGain(); // TODO: Miss should not make mana
+      StandardDamage(this, user, unit, DamageType.Physical);
       targetsHit.Add(unit);
     }
   }
 
-  private float GetDamage() {
+  public override float GetDamage() {
     return Damage() * user.monster.GetAttribute(Attribute.Agi);
   }
 

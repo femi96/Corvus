@@ -8,7 +8,6 @@ public class Pierce : Move {
   private List<Unit> targetsHit;
   private Tile[] targetTiles;
 
-  private bool energyPaid;
   private bool effectHappened;
 
   public override void Setup(Unit unit) {
@@ -22,13 +21,8 @@ public class Pierce : Move {
   public override bool Step(float actionTime) {
     float a = Mathf.Min(actionTime / actDuration, 1.0f);
 
-    if (!energyPaid) {
-      if (user.currentEnergy >= EnergyCost()) {
-        user.currentEnergy -= EnergyCost();
-        energyPaid = true;
-      } else
-        return false;
-    }
+    if (!EnoughEnergy(this, user))
+      return true;
 
     if (a >= 0.2f) {
       foreach (Tile actTile in targetTiles) {
@@ -53,19 +47,12 @@ public class Pierce : Move {
 
   private void OnHit(Unit unit) {
     if (user.team != unit.team && !targetsHit.Contains(unit)) {
-      bool crit = false;
-      float critDamage = user.monster.CritMod();
-
-      if (Random.Range(0f, 1f) < GetCritChance())
-        crit = true;
-
-      unit.DealDamage(GetDamage(), DamageType.Physical, crit, critDamage);
-      user.currentEnergy += GetEnergyGain();
+      StandardDamage(this, user, unit, DamageType.Physical);
       targetsHit.Add(unit);
     }
   }
 
-  private float GetDamage() {
+  public override float GetDamage() {
     return Damage() * user.monster.GetAttribute(Attribute.Wis);
   }
 

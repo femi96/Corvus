@@ -119,17 +119,7 @@ public class Unit : MonoBehaviour {
   }
 
   public void DealDamage(float damage, DamageType type = DamageType.True,
-                         bool crit = false, float critDamage = 1f) {
-
-    // Crit
-    if (crit)
-      damage *= critDamage;
-
-    // Evasion
-    bool miss = Random.Range(0f, 1f) < monster.Evasion() / 100f;
-
-    if (miss)
-      damage = 0;
+                         bool crit = false, bool miss = false) {
 
     // Damage effect on energy
     currentEnergy += Mathf.RoundToInt(damage / 200f * monster.EnergyMod());
@@ -152,7 +142,7 @@ public class Unit : MonoBehaviour {
     // int preHealth = currentHealth;
     currentHealth = Mathf.Max(currentHealth - roundedDamage, 0);
 
-    // Effects
+    // Visual Effects
     GameObject go = Instantiate(UIPrefabs.instance.textPrefab, UIPrefabs.instance.canvasTransform);
     Text txt = go.transform.Find("Text").gameObject.GetComponent<Text>();
     uiDamageText.Add(go);
@@ -306,8 +296,6 @@ public class Unit : MonoBehaviour {
   }
 
   private bool TryNewGoalSpecial() {
-    // TODO: Per Move unit prioritization
-    // TODO: Alternate through special moves
     int newCount = (specialMoveCount + 1) % monster.specMoves.Count;
 
     if (monster.specMoves.Count == 0 || currentEnergy < monster.specMoves[newCount].EnergyCost())
