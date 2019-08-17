@@ -56,7 +56,7 @@ public class Bang : Move {
     return Damage() * user.monster.GetAttribute(Attribute.Wis);
   }
 
-  public override float Range() { return 5; }
+  public override float Range() { return 2; }
 
   public override float Damage() { return 40f; }
 

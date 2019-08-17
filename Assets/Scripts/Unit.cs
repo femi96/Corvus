@@ -110,7 +110,7 @@ public class Unit : MonoBehaviour {
       Destroy(child.gameObject);
 
     model = monster.GetPrefab();
-    model = Instantiate(model, transform);
+    model = Instantiate(model, transform.position, Quaternion.identity, transform);
   }
 
   void OnMouseOver() {
@@ -281,6 +281,7 @@ public class Unit : MonoBehaviour {
       prevTile = currentTile;
 
       if (nextTile.unit == null) {
+        model.transform.rotation = Quaternion.LookRotation(nextTile.transform.position - prevTile.transform.position);
         nextTile.unit = this;
         prevTile.unit = null;
         currentTile = nextTile;
@@ -291,6 +292,7 @@ public class Unit : MonoBehaviour {
       break;
 
     case ActionState.Acting:
+      model.transform.rotation = Quaternion.LookRotation(attackTarget.transform.position - transform.position);
       move.Setup(this);
       break;
 

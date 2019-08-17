@@ -27,7 +27,7 @@ public class Tackle : Move {
           GameObject effectGo = Unit.Instantiate(MovePrefabs.instance.scratchPrefab, MovePrefabs.container);
           effectGo.transform.position = user.transform.position;
           Vector3 vel = actTile.transform.position - user.currentTile.transform.position;
-          effectGo.GetComponent<EffectMover>().velocity = vel * 1f;
+          effectGo.GetComponent<EffectMover>().velocity = vel * 1.2f;
           effectGo.GetComponent<EffectDelegate>().methodToCall = OnHit;
           effectGo.GetComponent<Timeout>().duration = 0.5f * actDuration;
         }
