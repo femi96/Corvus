@@ -377,16 +377,7 @@ public class Unit : MonoBehaviour {
 
     // if no moves, get all tiles in range from target
     // Route to nearest tile in range
-    List<Tile> tilesInRange = board.GetTilesInRange(attackTarget.currentTile, maxRange);
-    List<Tile> pathToTile = board.GetShortestPathTo(currentTile, tilesInRange);
-
-    if (pathToTile.Count > 0) {
-      nextTile = pathToTile[0];
-    } else {
-      nextTile = currentTile.neighbors[Random.Range(0, currentTile.neighbors.Count)];
-    }
-
-    ChangeActionState(ActionState.Moving);
+    PathToAttackTarget(maxRange);
   }
 
   private void NewActionForGoalSpecial() {
@@ -404,6 +395,11 @@ public class Unit : MonoBehaviour {
 
     // if no moves, get all tiles in range from target
     // Route to nearest tile in range
+    PathToAttackTarget(range);
+  }
+
+  private void PathToAttackTarget(float range) {
+    // Helper function that paths and moves unit to within range of attackTaget
     List<Tile> tilesInRange = board.GetTilesInRange(attackTarget.currentTile, range);
     List<Tile> pathToTile = board.GetShortestPathTo(currentTile, tilesInRange);
 
