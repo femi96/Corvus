@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Tackle : Move {
 
-  private const float actDuration = 1f;
+  private const float actDuration = 2f;
   private List<Unit> targetsHit;
   private Tile[] targetTiles;
 
@@ -24,10 +24,10 @@ public class Tackle : Move {
       foreach (Tile actTile in targetTiles) {
         if (!effectHappened) {
           effectHappened = true;
-          GameObject effectGo = Unit.Instantiate(MovePrefabs.instance.scratchPrefab, MovePrefabs.container);
+          GameObject effectGo = Unit.Instantiate(MovePrefabs.instance.tacklePrefab, MovePrefabs.container);
           effectGo.transform.position = user.transform.position;
-          Vector3 vel = actTile.transform.position - user.currentTile.transform.position;
-          effectGo.GetComponent<EffectMover>().velocity = vel * 1.2f;
+          Vector3 vel = (actTile.transform.position - user.currentTile.transform.position).normalized;
+          effectGo.GetComponent<EffectMover>().velocity = vel * 2f;
           effectGo.GetComponent<EffectDelegate>().methodToCall = OnHit;
           effectGo.GetComponent<Timeout>().duration = 0.5f * actDuration;
         }

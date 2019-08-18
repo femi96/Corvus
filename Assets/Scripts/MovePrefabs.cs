@@ -8,6 +8,8 @@ public class MovePrefabs : MonoBehaviour {
   public static Transform container;
 
   public GameObject scratchPrefab;
+  public GameObject tacklePrefab;
+
   public GameObject bangPrefab;
   public GameObject piercePrefab;
 

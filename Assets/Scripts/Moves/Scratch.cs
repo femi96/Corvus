@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Scratch : Move {
 
-  private const float actDuration = 1f;
+  private const float actDuration = 2f;
   private List<Unit> targetsHit;
   private Tile[] targetTiles;
 
@@ -26,8 +26,8 @@ public class Scratch : Move {
           effectHappened = true;
           GameObject effectGo = Unit.Instantiate(MovePrefabs.instance.scratchPrefab, MovePrefabs.container);
           effectGo.transform.position = user.transform.position;
-          Vector3 vel = actTile.transform.position - user.currentTile.transform.position;
-          effectGo.GetComponent<EffectMover>().velocity = vel * 3f;
+          Vector3 vel = (actTile.transform.position - user.currentTile.transform.position).normalized;
+          effectGo.GetComponent<EffectMover>().velocity = vel * 2f;
           effectGo.GetComponent<EffectDelegate>().methodToCall = OnHit;
           effectGo.GetComponent<Timeout>().duration = 0.5f * actDuration;
         }

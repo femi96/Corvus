@@ -371,6 +371,7 @@ public class Unit : MonoBehaviour {
     // if moves remaining (in range), use a random move
     if (movesInRange.Count > 0) {
       move = movesInRange[Random.Range(0, movesInRange.Count)];
+      Debug.Log(move);
       ChangeActionState(ActionState.Acting);
       return;
     }
