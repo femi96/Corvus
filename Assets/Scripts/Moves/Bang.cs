@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Bang : Move {
 
-  private const float actDuration = 1f;
+  private const float actDuration = 2f;
   private List<Unit> targetsHit;
   private Tile[] targetTiles;
 
@@ -30,8 +30,8 @@ public class Bang : Move {
           effectHappened = true;
           GameObject effectGo = Unit.Instantiate(MovePrefabs.instance.bangPrefab, MovePrefabs.container);
           effectGo.transform.position = user.transform.position;
-          Vector3 vel = actTile.transform.position - user.currentTile.transform.position;
-          effectGo.GetComponent<EffectMover>().velocity = vel * 0f;
+          Vector3 vel = (actTile.transform.position - user.currentTile.transform.position).normalized;
+          effectGo.GetComponent<EffectMover>().velocity = vel * 0.1f;
           effectGo.GetComponent<EffectDelegate>().methodToCall = OnHit;
           effectGo.GetComponent<Timeout>().duration = 0.5f * actDuration;
         }
@@ -56,7 +56,7 @@ public class Bang : Move {
     return Damage() * user.monster.GetAttribute(Attribute.Wis);
   }
 
-  public override float Range() { return 2; }
+  public override float Range() { return 2f; }
 
   public override float Damage() { return 40f; }
 

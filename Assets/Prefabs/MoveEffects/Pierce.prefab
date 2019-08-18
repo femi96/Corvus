@@ -25,7 +25,7 @@ GameObject:
   - component: {fileID: 114396055119800378}
   - component: {fileID: 54000971970573622}
   m_Layer: 0
-  m_Name: PierceEffect
+  m_Name: Pierce
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
