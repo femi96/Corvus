@@ -17,6 +17,7 @@ public class Unit : MonoBehaviour {
 
   public Monster monster;
   private GameObject model;
+  private bool onBoard = false;
 
 
   // Unit stats
@@ -190,7 +191,32 @@ public class Unit : MonoBehaviour {
     return actionState != ActionState.Dead;
   }
 
+  public bool IsOnBoard() {
+    return onBoard;
+  }
+
   public void MoveToTile(Tile tile) {
+    Board board = null;
+    bool curOnBoard = false;
+    bool newOnBoard = tile.tileHolder is Board;
+
+    if (currentTile != null)
+      curOnBoard = currentTile.tileHolder is Board;
+
+    if (curOnBoard)
+      board = currentTile.tileHolder as Board;
+
+    if (newOnBoard)
+      board = tile.tileHolder as Board;
+
+    if (board != null && curOnBoard != newOnBoard)
+      if (newOnBoard)
+        board.units.Add(this);
+      else
+        board.units.Remove(this);
+
+    onBoard = newOnBoard;
+
     if (currentTile.unit == this)
       currentTile.unit = null;
 

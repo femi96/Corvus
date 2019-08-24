@@ -6,7 +6,7 @@ public enum GroundType { Normal };
 
 public class Tile : MonoBehaviour {
 
-  public Board board;
+  public TileHolder tileHolder;
 
   public List<Tile> neighbors;  // List of neighbor tiles created using tile position
   public Unit unit;             // Unit currently on tile. Null when moving off, X when X is moving on
@@ -18,7 +18,7 @@ public class Tile : MonoBehaviour {
 
   void OnMouseOver() {
     if (Input.GetMouseButtonDown(0))
-      board.clickSelection.OnClickTile(this);
+      tileHolder.clickSelection.OnClickTile(this);
   }
 
   private void UpdateRep() {
@@ -37,8 +37,6 @@ public class Tile : MonoBehaviour {
       if (dist < 2)
         neighbors.Add(tile);
     }
-
-    // Debug.Log("Tile " + tileName + " neighbors gathered. Neighbor count: " + neighbors.Count);
   }
 
   public float DistanceTo(Tile other) {

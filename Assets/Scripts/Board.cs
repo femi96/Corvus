@@ -4,15 +4,15 @@ using UnityEngine;
 
 public enum BattleState { Off, On };
 
-public class Board : MonoBehaviour {
+public class Board : TileHolder {
 
-  private List<Tile> tiles;
-  public Unit[] units;
+  public List<Unit> units;
+  public int unitLimit;
+  public Team[] teams;
   public BattleState battleState;
   public bool debugToggleBattle;
   public bool debugLoopBattle;
 
-  public ClickSelection clickSelection;
   public Transform tileContainer;
 
   void Start() {
@@ -23,6 +23,7 @@ public class Board : MonoBehaviour {
   private void BoardSetup() {
     battleState = BattleState.Off;
     tiles = new List<Tile>();
+    units = new List<Unit>();
 
     foreach (Transform child in tileContainer) {
       Tile tile = child.GetComponent<Tile>();
@@ -30,19 +31,12 @@ public class Board : MonoBehaviour {
       if (tile != null) {
         tile.tileName = "Fren" + tiles.Count;
         tiles.Add(tile);
-        tile.board = this;
+        tile.tileHolder = this;
       }
     }
 
-    Debug.Log("Tiles gathered. Tile count: " + tiles.Count);
-    Debug.Log("Units gathered. Unit count: " + units.Length);
-
     foreach (Tile tile in tiles) {
       tile.SetNeighbors(tiles);
-    }
-
-    foreach (Unit unit in units) {
-      unit.board = this;
     }
   }
 

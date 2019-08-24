@@ -52,13 +52,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d392d7d0f4751b48b12962ed0e38ef7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  units:
-  - {fileID: 0}
+  tiles: []
+  clickSelection: {fileID: 0}
+  units: []
+  unitLimit: 4
+  teams:
   - {fileID: 0}
   - {fileID: 0}
   battleState: 0
   debugToggleBattle: 0
-  clickSelection: {fileID: 0}
+  debugLoopBattle: 0
+  tileContainer: {fileID: 0}
 --- !u!114 &114371286609833408
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -71,3 +75,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   selectedUnit: {fileID: 0}
+  selectionUI: {fileID: 0}

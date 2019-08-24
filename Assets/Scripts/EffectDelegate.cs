@@ -12,7 +12,8 @@ public class EffectDelegate : MonoBehaviour {
 
     if (methodToCall != null
         && unit != null
-        && unit.IsAlive())
+        && unit.IsAlive()
+        && unit.IsOnBoard())
       methodToCall(unit);
   }
 }
