@@ -40,7 +40,7 @@ public class Board : TileHolder {
     }
   }
 
-  private void StartBattle() {
+  public void StartBattle() {
 
     battleState = BattleState.On;
   }
