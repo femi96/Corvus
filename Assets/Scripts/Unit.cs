@@ -195,7 +195,7 @@ public class Unit : MonoBehaviour {
     return onBoard;
   }
 
-  public void MoveToTile(Tile tile) {
+  public void MoveToTile(Tile tile, bool swap = false) {
     Board board = null;
     bool curOnBoard = false;
     bool newOnBoard = tile.tileHolder is Board;
@@ -210,10 +210,13 @@ public class Unit : MonoBehaviour {
       board = tile.tileHolder as Board;
 
     if (board != null && curOnBoard != newOnBoard)
-      if (newOnBoard)
-        board.units.Add(this);
-      else
-        board.units.Remove(this);
+      if (newOnBoard) {
+        bool success = board.TryAddUnit(this, swap);
+
+        if (!success)
+          return;
+      } else
+        board.RemoveUnit(this);
 
     onBoard = newOnBoard;
 

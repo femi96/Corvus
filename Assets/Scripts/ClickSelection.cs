@@ -15,7 +15,7 @@ public class ClickSelection : MonoBehaviour {
     else {
       // Swap
       Tile tempTile = selectedUnit.currentTile;
-      selectedUnit.MoveToTile(unit.currentTile);
+      selectedUnit.MoveToTile(unit.currentTile, true);
       unit.MoveToTile(tempTile);
       selectedUnit = null;
     }
@@ -25,7 +25,7 @@ public class ClickSelection : MonoBehaviour {
     if (selectedUnit != null && board.battleState == BattleState.Off) {
       if (tile.unit != null) {
         // Swap if other
-        tile.unit.MoveToTile(selectedUnit.currentTile);
+        tile.unit.MoveToTile(selectedUnit.currentTile, true);
       }
 
       // Move to tile

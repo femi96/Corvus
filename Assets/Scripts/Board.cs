@@ -9,6 +9,7 @@ public class Board : TileHolder {
   public List<Unit> units;
   public int unitLimit;
   public Team[] teams;
+  private int[] teamCounts;
   public BattleState battleState;
   public bool debugToggleBattle;
   public bool debugLoopBattle;
@@ -38,6 +39,8 @@ public class Board : TileHolder {
     foreach (Tile tile in tiles) {
       tile.SetNeighbors(tiles);
     }
+
+    teamCounts = new int[teams.Length];
   }
 
   public void StartBattle() {
@@ -99,6 +102,21 @@ public class Board : TileHolder {
       if (debugLoopBattle)
         StartBattle();
     }
+  }
+
+  public bool TryAddUnit(Unit unit, bool ignoreLimit = false) {
+    if (teamCounts[unit.team] < unitLimit || ignoreLimit) {
+      teamCounts[unit.team] += 1;
+      units.Add(unit);
+      return true;
+    }
+
+    return false;
+  }
+
+  public void RemoveUnit(Unit unit) {
+    teamCounts[unit.team] -= 1;
+    units.Remove(unit);
   }
 
   public List<Tile> GetTilesInRange(Tile centerTile, float range) {
