@@ -75,7 +75,7 @@ public class Flamethrower : Move {
 
   public override float Range() { return 4f; }
 
-  public override float Damage() { return 100f; }
+  public override float Damage() { return 200f; }
 
   public override float CritChance() { return 0.1f; }
 

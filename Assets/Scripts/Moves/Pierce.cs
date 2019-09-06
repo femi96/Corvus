@@ -58,7 +58,7 @@ public class Pierce : Move {
 
   public override float Range() { return 10; }
 
-  public override float Damage() { return 20f; }
+  public override float Damage() { return 100f; }
 
   public override float CritChance() { return 0.2f; }
 

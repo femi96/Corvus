@@ -54,7 +54,7 @@ public class Scratch : Move {
 
   public override float Range() { return 2f; }
 
-  public override float Damage() { return 10f; }
+  public override float Damage() { return 50f; }
 
   public override float CritChance() { return 0.2f; }
 
