@@ -12,6 +12,7 @@ public class MovePrefabs : MonoBehaviour {
 
   public GameObject bangPrefab;
   public GameObject piercePrefab;
+  public GameObject flamePrefab;
 
   void Awake() {
     instance = this;

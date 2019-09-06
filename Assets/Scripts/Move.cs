@@ -14,6 +14,11 @@ public abstract class Move {
   public abstract bool Step(float actionTime);
 
 
+
+  public virtual bool UseAttackSpeed() {
+    return true;
+  }
+
   public abstract float Range();
 
   public abstract float Damage();
@@ -67,6 +72,20 @@ public abstract class Move {
 
     if (miss)
       damage = 0;
+
+    target.DealDamage(damage, type, crit, miss);
+
+    if (!miss)
+      user.currentEnergy += move.GetEnergyGain();
+  }
+
+  public static void SteadyDamage(Move move, Unit user, Unit target, DamageType type) {
+
+    float damage = move.GetDamage();
+    damage *= Random.Range(0.95f, 1.05f);
+
+    bool crit = false;
+    bool miss = false;
 
     target.DealDamage(damage, type, crit, miss);
 

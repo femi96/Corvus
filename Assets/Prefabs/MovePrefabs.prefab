@@ -61,6 +61,8 @@ MonoBehaviour:
   bangPrefab: {fileID: 1011939524647870, guid: 6715a000629fa6a45bfff4a5fbcb2ed7, type: 2}
   piercePrefab: {fileID: 1322309568536138, guid: 078fc97fb8d52fd46b277b0c707d52c3,
     type: 2}
+  flamePrefab: {fileID: 1011939524647870, guid: 77f055f36bfc5144db94c5fa5b30ea6c,
+    type: 2}
 --- !u!114 &114325337429461572
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -286,7 +286,11 @@ public class Unit : MonoBehaviour {
       break;
 
     case ActionState.Acting:
-      actionTime += Time.deltaTime * monster.AttackSpeed();
+      if (move.UseAttackSpeed())
+        actionTime += Time.deltaTime * monster.AttackSpeed();
+      else
+        actionTime += Time.deltaTime;
+
       bool actingDone = move.Step(actionTime);
 
       if (actingDone)
