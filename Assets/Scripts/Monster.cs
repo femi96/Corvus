@@ -68,8 +68,8 @@ public abstract class Monster {
 
   public float EnergyMod() {
     return 1f +
-           0.4f * attributes[Attribute.Wis] +
-           0.1f * attributes[Attribute.Wil];
+           0.1f * attributes[Attribute.Wis] +
+           0.025f * attributes[Attribute.Wil];
   }
 
   public float CritMod() {

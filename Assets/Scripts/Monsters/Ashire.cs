@@ -6,7 +6,6 @@ public class Ashire : Monster {
 
   public Ashire() : base()  {
     baseMoves.Add(new Scratch());
-    baseMoves.Add(new Tackle());
     specMoves.Add(new Flamethrower());
   }
 
@@ -22,8 +21,8 @@ public class Ashire : Monster {
     foreach (Attribute attr in System.Enum.GetValues(typeof(Attribute)))
       attributes[attr] = 3;
 
-    attributes[Attribute.Agi] = 5;
+    attributes[Attribute.Agi] = 4;
     attributes[Attribute.Wis] = 4;
-    attributes[Attribute.Wil] = 4;
+    attributes[Attribute.Wil] = 5;
   }
 }
