@@ -27,9 +27,9 @@ public class Tackle : Move {
           GameObject effectGo = Unit.Instantiate(MovePrefabs.instance.tacklePrefab, MovePrefabs.container);
           effectGo.transform.position = user.transform.position;
           Vector3 vel = (actTile.transform.position - user.currentTile.transform.position).normalized;
-          effectGo.GetComponent<EffectMover>().velocity = vel * 2f;
+          effectGo.GetComponent<EffectMover>().velocity = vel * 1f;
           effectGo.GetComponent<EffectDelegate>().methodToCall = OnHit;
-          effectGo.GetComponent<Timeout>().duration = 0.5f * actDuration;
+          effectGo.GetComponent<Timeout>().duration = 0.8f * actDuration;
         }
       }
     }
@@ -54,11 +54,11 @@ public class Tackle : Move {
 
   public override float Range() { return 2f; }
 
-  public override float Damage() { return 50f; }
+  public override float Damage() { return 30f; }
 
   public override float CritChance() { return 0.1f; }
 
-  public override float EnergyGain() { return 10f; }
+  public override float EnergyGain() { return 5f; }
 
   public override int EnergyCost() { return 0; }
 }

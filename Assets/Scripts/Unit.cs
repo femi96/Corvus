@@ -57,7 +57,7 @@ public class Unit : MonoBehaviour {
   private Vector3 uiHoverOffset = new Vector3(0, 1.25f, 0);
 
   void Start() {
-    if (Random.Range(0f, 1f) > 0.0f)
+    if (Random.Range(0f, 1f) > 0.5f)
       monster = new Ashire();
     else
       monster = new Shen();

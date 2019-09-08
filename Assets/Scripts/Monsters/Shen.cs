@@ -5,7 +5,6 @@ using UnityEngine;
 public class Shen : Monster {
 
   public Shen() : base()  {
-    baseMoves.Add(new Scratch());
     baseMoves.Add(new Tackle());
     specMoves.Add(new Bang());
     specMoves.Add(new Pierce());
@@ -23,8 +22,8 @@ public class Shen : Monster {
     foreach (Attribute attr in System.Enum.GetValues(typeof(Attribute)))
       attributes[attr] = 3;
 
-    attributes[Attribute.Str] = 5;
-    attributes[Attribute.Vit] = 4;
+    attributes[Attribute.Str] = 4;
+    attributes[Attribute.Vit] = 5;
     attributes[Attribute.Rea] = 4;
   }
 }
