@@ -31,7 +31,7 @@ public class Pierce : Move {
           GameObject effectGo = Unit.Instantiate(MovePrefabs.instance.piercePrefab, MovePrefabs.container);
           effectGo.transform.position = user.transform.position;
           Vector3 vel = (actTile.transform.position - user.currentTile.transform.position).normalized;
-          effectGo.GetComponent<EffectMover>().velocity = vel * 10f;
+          effectGo.GetComponent<EffectMover>().velocity = vel * 2f;
           effectGo.GetComponent<EffectDelegate>().methodToCall = OnHit;
           effectGo.GetComponent<Timeout>().duration = 1.5f * actDuration;
         }
@@ -47,7 +47,7 @@ public class Pierce : Move {
 
   private void OnHit(Unit unit) {
     if (user.team != unit.team && !targetsHit.Contains(unit)) {
-      StandardDamage(this, user, unit, DamageType.True);
+      SteadyDamage(this, user, unit, DamageType.True);
       targetsHit.Add(unit);
     }
   }
@@ -56,7 +56,7 @@ public class Pierce : Move {
     return Damage() * user.monster.GetAttribute(Attribute.Wis);
   }
 
-  public override float Range() { return 10; }
+  public override float Range() { return 6f; }
 
   public override float Damage() { return 100f; }
 
