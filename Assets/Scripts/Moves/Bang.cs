@@ -30,10 +30,11 @@ public class Bang : Move {
           effectHappened = true;
           GameObject effectGo = Unit.Instantiate(MovePrefabs.instance.bangPrefab, MovePrefabs.container);
           effectGo.transform.position = user.transform.position;
-          Vector3 vel = (actTile.transform.position - user.currentTile.transform.position).normalized;
-          effectGo.GetComponent<EffectMover>().velocity = vel * 0.1f;
+          effectGo.GetComponent<EffectMover>().velocity = 0.01f * Vector3.up;
+          effectGo.transform.localScale = Vector3.zero;
+          effectGo.GetComponent<EffectMover>().expand = Vector3.one / (0.8f * actDuration);
           effectGo.GetComponent<EffectDelegate>().methodToCall = OnHit;
-          effectGo.GetComponent<Timeout>().duration = 0.5f * actDuration;
+          effectGo.GetComponent<Timeout>().duration = 0.8f * actDuration;
         }
       }
     }
@@ -58,7 +59,7 @@ public class Bang : Move {
 
   public override float Range() { return 2f; }
 
-  public override float Damage() { return 100f; }
+  public override float Damage() { return 200f; }
 
   public override float CritChance() { return 0.2f; }
 

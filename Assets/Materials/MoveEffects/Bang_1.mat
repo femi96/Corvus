@@ -6,7 +6,7 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: Bang
+  m_Name: Bang_1
   m_Shader: {fileID: 203, guid: 0000000000000000f000000000000000, type: 0}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
@@ -75,4 +75,4 @@ Material:
     m_Colors:
     - _Color: {r: 1, g: 0.45882356, b: 0.9984909, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _TintColor: {r: 1, g: 0.40784314, b: 0, a: 0.5372549}
+    - _TintColor: {r: 1, g: 0.75714386, b: 0, a: 0.03529412}
