@@ -3,7 +3,7 @@
 	[
 		{
 			"follow_symlinks": true,
-			"path": "Assets/Scripts",
+			"path": "Assets/",
 			"file_exclude_patterns":
 			[
 				"*.dll",
