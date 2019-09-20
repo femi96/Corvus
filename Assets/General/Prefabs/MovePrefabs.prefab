@@ -77,6 +77,8 @@ MonoBehaviour:
   canvasTransform: {fileID: 0}
   hoverPrefab: {fileID: 1635401602891216, guid: 88f5fff5b5621294aa627da39b8f3676,
     type: 2}
+  playerHoverPrefab: {fileID: 1461286856182614, guid: 101db1390db01164bb475530d36a571c,
+    type: 2}
   textPrefab: {fileID: 1560804842467394, guid: 73e5672b1828e2a4e9f296be0e076150, type: 2}
 --- !u!114 &114437676793899276
 MonoBehaviour:

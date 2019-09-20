@@ -9,6 +9,7 @@ public class UIPrefabs : MonoBehaviour {
   public Transform canvasTransform;
 
   public GameObject hoverPrefab;
+  public GameObject playerHoverPrefab;
   public GameObject textPrefab;
 
   void Awake() {

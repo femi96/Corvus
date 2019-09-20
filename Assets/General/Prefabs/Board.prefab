@@ -60,9 +60,14 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   battleState: 0
+  player: {fileID: 0}
   debugToggleBattle: 0
   debugLoopBattle: 0
   tileContainer: {fileID: 0}
+  startBattleButton: {fileID: 0}
+  unitCountText: {fileID: 0}
+  winCountText: {fileID: 0}
+  roundText: {fileID: 0}
 --- !u!114 &114371286609833408
 MonoBehaviour:
   m_ObjectHideFlags: 1

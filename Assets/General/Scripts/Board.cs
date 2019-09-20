@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public enum BattleState { Off, On };
 
@@ -10,11 +11,20 @@ public class Board : TileHolder {
   public int unitLimit;
   public Team[] teams;
   private int[] teamCounts;
+  private int[] winCounts;
+  private int round;
   public BattleState battleState;
+  public Player player;
+
   public bool debugToggleBattle;
   public bool debugLoopBattle;
 
   public Transform tileContainer;
+
+  public GameObject startBattleButton;
+  public Text unitCountText;
+  public Text winCountText;
+  public Text roundText;
 
   void Start() {
     clickSelection = GetComponent<ClickSelection>();
@@ -41,14 +51,26 @@ public class Board : TileHolder {
     }
 
     teamCounts = new int[teams.Length];
+    winCounts = new int[teams.Length];
+
+    round = 1;
+
+    unitCountText.text = teamCounts[0] + " / " + unitLimit;
+    winCountText.text = winCounts[0] + " vs " + winCounts[1];
+    roundText.text = "Round: " + round;
   }
 
   public void StartBattle() {
+    if (units.Count == 0)
+      return;
 
     battleState = BattleState.On;
+    startBattleButton.SetActive(false);
   }
 
   private void EndBattle() {
+    round += 1;
+    roundText.text = "Round: " + round;
 
     foreach (Transform child in MovePrefabs.container)
       Destroy(child.gameObject);
@@ -59,6 +81,7 @@ public class Board : TileHolder {
     }
 
     battleState = BattleState.Off;
+    startBattleButton.SetActive(true);
   }
 
   void Update() {
@@ -96,7 +119,19 @@ public class Board : TileHolder {
 
     if (alive.Count == 1) {
       int winner = alive[0];
-      Debug.Log("Team " + winner + " wins");
+      winCounts[winner] += 1;
+      winCountText.text = winCounts[0] + " vs " + winCounts[1];
+      int damage = 5;
+      player.DealDamage(damage);
+
+      if (winner == 0)
+        Debug.Log("Round won!");
+      else
+        Debug.Log("Round lost! Take " + damage + " damage!");
+
+      if (winCounts[winner] == 3)
+        Debug.Log("Team " + winner + " wins match best of 5, end encounter");
+
       EndBattle();
 
       if (debugLoopBattle)
@@ -108,6 +143,7 @@ public class Board : TileHolder {
     if (teamCounts[unit.team] < unitLimit || ignoreLimit) {
       teamCounts[unit.team] += 1;
       units.Add(unit);
+      unitCountText.text = teamCounts[0] + " / " + unitLimit;
       return true;
     }
 
@@ -117,6 +153,7 @@ public class Board : TileHolder {
   public void RemoveUnit(Unit unit) {
     teamCounts[unit.team] -= 1;
     units.Remove(unit);
+    unitCountText.text = teamCounts[0] + " / " + unitLimit;
   }
 
   public List<Tile> GetTilesInRange(Tile centerTile, float range) {

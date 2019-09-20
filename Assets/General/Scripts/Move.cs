@@ -59,7 +59,7 @@ public abstract class Move {
   public static void StandardDamage(Move move, Unit user, Unit target, DamageType type) {
 
     float damage = move.GetDamage();
-    damage *= Random.Range(0.95f, 1.05f);
+    damage *= Random.Range(0.9f, 1.1f);
 
     // Crit
     bool crit = Random.Range(0f, 1f) < move.GetCritChance();
@@ -82,7 +82,7 @@ public abstract class Move {
   public static void SteadyDamage(Move move, Unit user, Unit target, DamageType type) {
 
     float damage = move.GetDamage();
-    damage *= Random.Range(0.95f, 1.05f);
+    damage *= Random.Range(0.9f, 1.1f);
 
     bool crit = false;
     bool miss = false;

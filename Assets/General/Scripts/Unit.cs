@@ -42,6 +42,7 @@ public class Unit : MonoBehaviour {
   // Moving
   private const float moveDuration = 0.5f;
   public Tile currentTile;
+  private Tile startingTile;
   private Tile nextTile;
   private Tile prevTile;
 
@@ -196,6 +197,9 @@ public class Unit : MonoBehaviour {
   }
 
   public void MoveToTile(Tile tile, bool swap = false) {
+    if (tile == null)
+      return;
+
     Board board = null;
     bool curOnBoard = false;
     bool newOnBoard = tile.tileHolder is Board;
@@ -227,6 +231,8 @@ public class Unit : MonoBehaviour {
     currentTile.unit = this;
     Vector3 tilePos = currentTile.transform.position;
     transform.position = tilePos + 0.75f * Vector3.up;
+
+    startingTile = currentTile;
   }
 
   public void ResetUnit() {
@@ -235,6 +241,7 @@ public class Unit : MonoBehaviour {
     specialMoveCount = -1;
     goalState = GoalState.None;
     actionState = ActionState.Wait;
+    MoveToTile(startingTile);
   }
 
   public void BattleTimeStep() {
@@ -361,6 +368,9 @@ public class Unit : MonoBehaviour {
       }
     }
 
+    if (attackTarget == null)
+      return false;
+
     return true;
   }
 
@@ -380,6 +390,9 @@ public class Unit : MonoBehaviour {
         minDist = dist;
       }
     }
+
+    if (attackTarget == null)
+      return false;
 
     return true;
   }
