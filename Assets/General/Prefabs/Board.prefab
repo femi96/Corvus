@@ -64,6 +64,15 @@ MonoBehaviour:
   debugToggleBattle: 0
   debugLoopBattle: 0
   tileContainer: {fileID: 0}
+  teamTiles0:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  teamTiles1:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   startBattleButton: {fileID: 0}
   unitCountText: {fileID: 0}
   winCountText: {fileID: 0}

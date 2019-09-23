@@ -35,4 +35,8 @@ public class Team : TileHolder {
       u.team = teamInt;
     }
   }
+
+  public override bool CanMoveTo(int team, Tile tile) {
+    return team == teamInt;
+  }
 }

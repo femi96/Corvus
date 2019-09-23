@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -20,6 +21,8 @@ public class Board : TileHolder {
   public bool debugLoopBattle;
 
   public Transform tileContainer;
+  public Tile[] teamTiles0;
+  public Tile[] teamTiles1;
 
   public GameObject startBattleButton;
   public Text unitCountText;
@@ -192,5 +195,14 @@ public class Board : TileHolder {
     }
 
     return paths[srcTile];
+  }
+
+  public override bool CanMoveTo(int team, Tile tile) {
+    if (team == 0)
+      return Array.Exists(teamTiles0, e => e == tile);
+    else if (team == 1)
+      return Array.Exists(teamTiles1, e => e == tile);
+
+    return false;
   }
 }
