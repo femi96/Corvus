@@ -67,6 +67,8 @@ public class Board : TileHolder {
     if (units.Count == 0)
       return;
 
+    PlaceEnemyUnits();
+
     battleState = BattleState.On;
     startBattleButton.SetActive(false);
   }
@@ -204,5 +206,44 @@ public class Board : TileHolder {
       return Array.Exists(teamTiles1, e => e == tile);
 
     return false;
+  }
+
+  private void PlaceEnemyUnits() {
+    // Move all units to bench
+    foreach (Unit unit in teams[1].units) {
+      foreach (Tile tile in teams[1].tiles) {
+        if (tile.unit == null) {
+          unit.MoveToTile(tile);
+          break;
+        }
+      }
+    }
+
+    // Randomly select units up to limit
+    List<Unit> unitsToPlace = new List<Unit>();
+    List<Unit> unitsCouldPlace = new List<Unit>();
+
+    foreach (Unit unit in teams[1].units) {
+      unitsCouldPlace.Add(unit);
+    }
+
+    while (unitsToPlace.Count < unitLimit && unitsCouldPlace.Count > 0) {
+      int i = UnityEngine.Random.Range(0, unitsCouldPlace.Count);
+      unitsToPlace.Add(unitsCouldPlace[i]);
+      unitsCouldPlace.RemoveAt(i);
+    }
+
+    // Randomly place on board
+    List<Tile> tilesAvailable = new List<Tile>();
+
+    foreach (Tile tile in teamTiles1) {
+      tilesAvailable.Add(tile);
+    }
+
+    foreach (Unit unit in unitsToPlace) {
+      int i = UnityEngine.Random.Range(0, tilesAvailable.Count);
+      unit.MoveToTile(tilesAvailable[i]);
+      tilesAvailable.RemoveAt(i);
+    }
   }
 }

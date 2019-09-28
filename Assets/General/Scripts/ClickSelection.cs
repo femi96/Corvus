@@ -14,7 +14,7 @@ public class ClickSelection : MonoBehaviour {
       selectedUnit = unit;
     else {
       // Swap
-      if (!unit.currentTile.tileHolder.CanMoveTo(selectedUnit.team, unit.currentTile)) {
+      if (unit.team != 0 || !unit.currentTile.tileHolder.CanMoveTo(selectedUnit.team, unit.currentTile)) {
         selectedUnit = unit;
         return;
       }
@@ -28,7 +28,7 @@ public class ClickSelection : MonoBehaviour {
 
   public void OnClickTile(Tile tile) {
     if (selectedUnit != null && board.battleState == BattleState.Off) {
-      if (!tile.tileHolder.CanMoveTo(selectedUnit.team, tile)) {
+      if (selectedUnit.team != 0 || !tile.tileHolder.CanMoveTo(selectedUnit.team, tile)) {
         selectedUnit = null;
         return;
       }
