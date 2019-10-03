@@ -6,6 +6,8 @@ public class MonsterPrefabs : MonoBehaviour {
 
   public static MonsterPrefabs instance;
 
+  public GameObject unitPrefab;
+
   public GameObject ashirePrefab;
   public GameObject shenPrefab;
 

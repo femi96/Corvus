@@ -57,20 +57,7 @@ public class Unit : MonoBehaviour {
   private List<GameObject> uiDamageText;
   private Vector3 uiHoverOffset = new Vector3(0, 1.25f, 0);
 
-  void Start() {
-    if (Random.Range(0f, 1f) > 0.5f)
-      monster = new Ashire();
-    else
-      monster = new Shen();
-
-    ResetModel();
-    ResetUnit();
-
-    uiHover = Instantiate(UIPrefabs.instance.hoverPrefab, UIPrefabs.instance.canvasTransform);
-    uiHealth = uiHover.transform.Find("Health").gameObject;
-    uiEnergy = uiHover.transform.Find("Energy").gameObject;
-    uiDamageText = new List<GameObject>();
-  }
+  void Start() {}
 
   void Update() {
 
@@ -78,6 +65,19 @@ public class Unit : MonoBehaviour {
 
   void LateUpdate() {
     UpdateUI();
+  }
+
+  public void Setup(Monster m) {
+    monster = m;
+
+    board = FindObjectsOfType<Board>()[0];
+    ResetModel();
+    ResetUnit();
+
+    uiHover = Instantiate(UIPrefabs.instance.hoverPrefab, UIPrefabs.instance.canvasTransform);
+    uiHealth = uiHover.transform.Find("Health").gameObject;
+    uiEnergy = uiHover.transform.Find("Energy").gameObject;
+    uiDamageText = new List<GameObject>();
   }
 
   private void UpdateUI() {
@@ -224,7 +224,7 @@ public class Unit : MonoBehaviour {
 
     onBoard = newOnBoard;
 
-    if (currentTile.unit == this)
+    if (currentTile != null && currentTile.unit == this)
       currentTile.unit = null;
 
     currentTile = tile;

@@ -7,6 +7,8 @@ public class Player : MonoBehaviour {
   public int curHealth;
   public int maxHealth = 40;
 
+  public Party party;
+
   private GameObject uiHover;
   private GameObject uiHealth;
   private Vector3 uiHoverOffset = new Vector3(0, 1.25f, 0);
@@ -16,6 +18,8 @@ public class Player : MonoBehaviour {
 
     uiHover = Instantiate(UIPrefabs.instance.playerHoverPrefab, UIPrefabs.instance.canvasTransform);
     uiHealth = uiHover.transform.Find("Health").gameObject;
+
+    party = new Party();
   }
 
   void Update() {

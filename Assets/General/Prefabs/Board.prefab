@@ -56,7 +56,7 @@ MonoBehaviour:
   clickSelection: {fileID: 0}
   units: []
   unitLimit: 4
-  teams:
+  parties:
   - {fileID: 0}
   - {fileID: 0}
   battleState: 0

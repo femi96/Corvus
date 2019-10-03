@@ -10,8 +10,8 @@ public class Board : TileHolder {
 
   public List<Unit> units;
   public int unitLimit;
-  public Team[] teams;
-  private int[] teamCounts;
+  public PartyTileHolder[] parties;
+  private int[] teamUnitCounts;
   private int[] winCounts;
   private int round;
   public BattleState battleState;
@@ -29,12 +29,12 @@ public class Board : TileHolder {
   public Text winCountText;
   public Text roundText;
 
-  void Start() {
-    clickSelection = GetComponent<ClickSelection>();
-    BoardSetup();
-  }
+  private bool setupDone = false;
+
+  void Start() {}
 
   private void BoardSetup() {
+    clickSelection = GetComponent<ClickSelection>();
     battleState = BattleState.Off;
     tiles = new List<Tile>();
     units = new List<Unit>();
@@ -53,14 +53,16 @@ public class Board : TileHolder {
       tile.SetNeighbors(tiles);
     }
 
-    teamCounts = new int[teams.Length];
-    winCounts = new int[teams.Length];
+    teamUnitCounts = new int[parties.Length];
+    winCounts = new int[parties.Length];
 
     round = 1;
 
-    unitCountText.text = teamCounts[0] + " / " + unitLimit;
+    unitCountText.text = teamUnitCounts[0] + " / " + unitLimit;
     winCountText.text = winCounts[0] + " vs " + winCounts[1];
     roundText.text = "Round: " + round;
+
+    setupDone = true;
   }
 
   public void StartBattle() {
@@ -90,6 +92,19 @@ public class Board : TileHolder {
   }
 
   void Update() {
+
+    if (!setupDone) {
+      bool partySetupDone = true;
+
+      foreach (PartyTileHolder p in parties)
+        partySetupDone = partySetupDone && p.setupDone;
+
+      if (partySetupDone)
+        BoardSetup();
+
+      return;
+    }
+
     BattleStep();
 
     if (debugToggleBattle) {
@@ -145,10 +160,10 @@ public class Board : TileHolder {
   }
 
   public bool TryAddUnit(Unit unit, bool ignoreLimit = false) {
-    if (teamCounts[unit.team] < unitLimit || ignoreLimit) {
-      teamCounts[unit.team] += 1;
+    if (teamUnitCounts[unit.team] < unitLimit || ignoreLimit) {
+      teamUnitCounts[unit.team] += 1;
       units.Add(unit);
-      unitCountText.text = teamCounts[0] + " / " + unitLimit;
+      unitCountText.text = teamUnitCounts[0] + " / " + unitLimit;
       return true;
     }
 
@@ -156,9 +171,9 @@ public class Board : TileHolder {
   }
 
   public void RemoveUnit(Unit unit) {
-    teamCounts[unit.team] -= 1;
+    teamUnitCounts[unit.team] -= 1;
     units.Remove(unit);
-    unitCountText.text = teamCounts[0] + " / " + unitLimit;
+    unitCountText.text = teamUnitCounts[0] + " / " + unitLimit;
   }
 
   public List<Tile> GetTilesInRange(Tile centerTile, float range) {
@@ -210,8 +225,8 @@ public class Board : TileHolder {
 
   private void PlaceEnemyUnits() {
     // Move all units to bench
-    foreach (Unit unit in teams[1].units) {
-      foreach (Tile tile in teams[1].tiles) {
+    foreach (Unit unit in parties[1].units) {
+      foreach (Tile tile in parties[1].tiles) {
         if (tile.unit == null) {
           unit.MoveToTile(tile);
           break;
@@ -223,7 +238,7 @@ public class Board : TileHolder {
     List<Unit> unitsToPlace = new List<Unit>();
     List<Unit> unitsCouldPlace = new List<Unit>();
 
-    foreach (Unit unit in teams[1].units) {
+    foreach (Unit unit in parties[1].units) {
       unitsCouldPlace.Add(unit);
     }
 
