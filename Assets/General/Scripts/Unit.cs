@@ -51,7 +51,7 @@ public class Unit : MonoBehaviour {
 
   // UI
   [Header("UI")]
-  private GameObject uiHover;
+  public GameObject uiHover;
   private GameObject uiHealth;
   private GameObject uiEnergy;
   private List<GameObject> uiDamageText;
@@ -184,7 +184,7 @@ public class Unit : MonoBehaviour {
     if (currentHealth > 0)
       return;
 
-    Debug.Log("Unit dies");
+    // Debug.Log("Unit dies");
     ChangeActionState(ActionState.Dead);
   }
 
@@ -417,7 +417,7 @@ public class Unit : MonoBehaviour {
     // if moves remaining (in range), use a random move
     if (movesInRange.Count > 0) {
       move = movesInRange[Random.Range(0, movesInRange.Count)];
-      Debug.Log(move);
+      // Debug.Log(move);
       ChangeActionState(ActionState.Acting);
       return;
     }

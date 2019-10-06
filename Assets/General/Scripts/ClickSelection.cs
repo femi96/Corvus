@@ -5,8 +5,16 @@ using UnityEngine.UI;
 
 public class ClickSelection : MonoBehaviour {
 
+  public static ClickSelection instance;
+
   public Unit selectedUnit;
   private Board board;
+  private bool setup = false;
+
+  public void StartBattle() {
+    if (board != null)
+      board.StartBattle();
+  }
 
   public void OnClickUnit(Unit unit) {
     if (selectedUnit == null || board.battleState != BattleState.Off)
@@ -45,7 +53,11 @@ public class ClickSelection : MonoBehaviour {
   }
 
   void Awake() {
-    board = GetComponent<Board>();
+    instance = this;
+  }
+
+  public void Setup() {
+    board = FindObjectsOfType<Board>()[0];
 
     nameText = selectionUI.transform.Find("Name").gameObject.GetComponent<Text>();
     teamImage = selectionUI.transform.Find("Team").gameObject.GetComponent<Image>();
@@ -62,6 +74,7 @@ public class ClickSelection : MonoBehaviour {
     vitText = selectionUI.transform.Find("Attribute/Vit").gameObject.GetComponent<Text>();
     reaText = selectionUI.transform.Find("Attribute/Rea").gameObject.GetComponent<Text>();
     wilText = selectionUI.transform.Find("Attribute/Wil").gameObject.GetComponent<Text>();
+    setup = true;
   }
 
   void Update() {}
@@ -84,7 +97,11 @@ public class ClickSelection : MonoBehaviour {
   private Text strText, agiText, wisText, vitText, reaText, wilText;
 
   private void UpdateUI() {
+
     selectionUI.SetActive(selectedUnit != null);
+
+    if (!setup)
+      return;
 
     if (!selectedUnit)
       return;

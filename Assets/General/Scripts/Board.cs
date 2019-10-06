@@ -20,26 +20,26 @@ public class Board : TileHolder {
   public bool debugToggleBattle;
   public bool debugLoopBattle;
 
-  public Transform tileContainer;
   public Tile[] teamTiles0;
   public Tile[] teamTiles1;
 
-  public GameObject startBattleButton;
-  public Text unitCountText;
-  public Text winCountText;
-  public Text roundText;
+  private GameObject startBattleButton;
+  private Text unitCountText;
+  private Text winCountText;
+  private Text roundText;
 
   private bool setupDone = false;
 
   void Start() {}
 
   private void BoardSetup() {
-    clickSelection = GetComponent<ClickSelection>();
+    clickSelection = FindObjectsOfType<ClickSelection>()[0];
+    player = FindObjectsOfType<Player>()[0];
     battleState = BattleState.Off;
     tiles = new List<Tile>();
     units = new List<Unit>();
 
-    foreach (Transform child in tileContainer) {
+    foreach (Transform child in transform) {
       Tile tile = child.GetComponent<Tile>();
 
       if (tile != null) {
@@ -57,6 +57,12 @@ public class Board : TileHolder {
     winCounts = new int[parties.Length];
 
     round = 1;
+
+    // Get UI pointers
+    startBattleButton = UIPointers.instance.startBattleButton;
+    unitCountText = UIPointers.instance.unitCountText;
+    winCountText = UIPointers.instance.winCountText;
+    roundText = UIPointers.instance.roundText;
 
     unitCountText.text = teamUnitCounts[0] + " / " + unitLimit;
     winCountText.text = winCounts[0] + " vs " + winCounts[1];
@@ -149,8 +155,12 @@ public class Board : TileHolder {
       else
         Debug.Log("Round lost! Take " + damage + " damage!");
 
-      if (winCounts[winner] == 3)
+      if (winCounts[winner] == 3) {
         Debug.Log("Team " + winner + " wins match best of 5, end encounter");
+        EndBattle();
+        EndEncounter();
+        return;
+      }
 
       EndBattle();
 
@@ -256,9 +266,22 @@ public class Board : TileHolder {
     }
 
     foreach (Unit unit in unitsToPlace) {
-      int i = UnityEngine.Random.Range(0, tilesAvailable.Count);
-      unit.MoveToTile(tilesAvailable[i]);
-      tilesAvailable.RemoveAt(i);
+      int j = UnityEngine.Random.Range(0, tilesAvailable.Count);
+      unit.MoveToTile(tilesAvailable[j]);
+      tilesAvailable.RemoveAt(j);
     }
+  }
+
+  private void EndEncounter() {
+    foreach (Unit unit in units)
+      Destroy(unit.uiHover);
+
+    foreach (Unit unit in parties[0].units)
+      Destroy(unit.uiHover);
+
+    foreach (Unit unit in parties[1].units)
+      Destroy(unit.uiHover);
+
+    FindObjectsOfType<Floor>()[0].EndEncounter();
   }
 }
