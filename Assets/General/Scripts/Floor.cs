@@ -6,7 +6,12 @@ public class Floor : MonoBehaviour {
 
   public Player player;
 
+  public GameObject encounterObjectPrefab;
+  public Transform floorMapContainer;
+
   private GameObject boardObject;
+  private List<EncounterObject> encounterObjects;
+  private EncounterObject currentEncounterObject;
 
   [Header("UI")]
   public GameObject nextEncounterUI;
@@ -14,6 +19,7 @@ public class Floor : MonoBehaviour {
 
   void Start() {
     startBattleUI.SetActive(false);
+    GenerateEncounterGraph();
   }
 
   void Update() {}
@@ -37,11 +43,107 @@ public class Floor : MonoBehaviour {
 
     nextEncounterUI.SetActive(false);
     startBattleUI.SetActive(true);
+
+    floorMapContainer.gameObject.SetActive(false);
   }
 
   public void EndEncounter() {
     Destroy(boardObject);
     nextEncounterUI.SetActive(true);
     startBattleUI.SetActive(false);
+
+    foreach (EncounterObject e in encounterObjects) {
+      if (!e.Unlocked())
+        continue;
+
+      if (e != currentEncounterObject)
+        e.Skip();
+    }
+
+    currentEncounterObject.FinishEncounter();
+    floorMapContainer.gameObject.SetActive(true);
+  }
+
+  public void SetEncounterObject(EncounterObject e) {
+    currentEncounterObject = e;
+  }
+
+  public void GenerateEncounterGraph() {
+    foreach (Transform child in floorMapContainer)
+      Destroy(child.gameObject);
+
+    const float xPadding = 1f;
+    const float xStart = -3.5f;
+    const float yPadding = 1f;
+
+    // Generate an encounter graph with 6 layers
+    List<int> layerWidths = new List<int>() { 2, 2, 3, 3 };
+    layerWidths.Add(Random.Range(2, 4));
+    layerWidths.Add(Random.Range(2, 4));
+    List<int> layerWidthsInOrder = new List<int>();
+
+    while (layerWidths.Count > 0) {
+      int i = UnityEngine.Random.Range(0, layerWidths.Count);
+      layerWidthsInOrder.Add(layerWidths[i]);
+      layerWidths.RemoveAt(i);
+    }
+
+    encounterObjects = new List<EncounterObject>();
+
+    List<EncounterObject> prevEncs;
+    List<EncounterObject> currEncs;
+
+    prevEncs = new List<EncounterObject>();
+    EncounterObject startEnc = Instantiate(encounterObjectPrefab, floorMapContainer).GetComponent<EncounterObject>();
+    startEnc.SetStart(this);
+    startEnc.transform.position = Vector3.right * (xPadding * (xStart + 0));
+    prevEncs.Add(startEnc);
+    encounterObjects.Add(startEnc);
+
+    while (layerWidthsInOrder.Count > 0) {
+      currEncs = new List<EncounterObject>();
+      int count = layerWidthsInOrder[0];
+      int x = 7 - layerWidthsInOrder.Count;
+      float yStart = -(count - 1) / 2f;
+
+      for (int i = 0; i < count; i++) {
+        EncounterObject newEnc = Instantiate(encounterObjectPrefab, floorMapContainer).GetComponent<EncounterObject>();
+        newEnc.SetEncounter(new Encounter(), this);
+        newEnc.transform.position = Vector3.right * (xPadding * (xStart + x))
+                                    + Vector3.forward * (yPadding * (yStart + i));
+        currEncs.Add(newEnc);
+        encounterObjects.Add(newEnc);
+      }
+
+      // Connect prev to current (adjacent only)
+      for (int i = 0; i < prevEncs.Count; i++) {
+        EncounterObject pe = prevEncs[i];
+        float iv = i / prevEncs.Count;
+
+        for (int j = 0; j < currEncs.Count; j++) {
+          EncounterObject ce = currEncs[j];
+          float jv = j / currEncs.Count;
+          float cv = 1 / currEncs.Count;
+
+          if ((jv <= iv && jv + cv >= iv) || (jv >= iv && jv - cv <= iv))
+            pe.AddNext(ce);
+        }
+      }
+
+      layerWidthsInOrder.RemoveAt(0);
+      prevEncs = currEncs;
+    }
+
+    currEncs = new List<EncounterObject>();
+    EncounterObject endEnc = Instantiate(encounterObjectPrefab, floorMapContainer).GetComponent<EncounterObject>();
+    endEnc.SetEnd(this);
+    endEnc.transform.position = Vector3.right * (xPadding * (xStart + 7));
+    currEncs.Add(endEnc);
+    encounterObjects.Add(endEnc);
+
+    // Connect prev to end
+    foreach (EncounterObject pe in prevEncs) {
+      pe.AddNext(endEnc);
+    }
   }
 }

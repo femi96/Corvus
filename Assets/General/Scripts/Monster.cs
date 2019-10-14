@@ -32,10 +32,10 @@ public abstract class Monster {
 
   // TODO: Make these effected by status effects
   public int MaxHealth() {
-    return 100 +
-           73 * attributes[Attribute.Vit] +
-           29 * attributes[Attribute.Str] +
-           11 * attributes[Attribute.Agi];
+    return 50 +
+           37 * attributes[Attribute.Vit] +
+           14 * attributes[Attribute.Str] +
+           5 * attributes[Attribute.Agi];
   }
 
   public float MoveSpeed() {
