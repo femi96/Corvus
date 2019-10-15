@@ -54,6 +54,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   visualPrefab: {fileID: 1708526180409466, guid: 0f14d83fbe47a724584149468300934f,
     type: 2}
+  linePrefab: {fileID: 1335458772578484, guid: 0c88c65391336d143b062665c385505b, type: 2}
   startMat: {fileID: 2100000, guid: 746adf41b158bab4ea6f9b1696678421, type: 2}
   endMat: {fileID: 2100000, guid: 306aedce4f07cec4da119e52bf21ca8d, type: 2}
   defaultMat: {fileID: 2100000, guid: bc0937482d0e0b442a710bb5f6d336e1, type: 2}

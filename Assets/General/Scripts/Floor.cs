@@ -118,14 +118,16 @@ public class Floor : MonoBehaviour {
       // Connect prev to current (adjacent only)
       for (int i = 0; i < prevEncs.Count; i++) {
         EncounterObject pe = prevEncs[i];
-        float iv = i / prevEncs.Count;
+        float iv = i * 1f  / prevEncs.Count;
+        float id = 1 * 1f  / prevEncs.Count;
 
         for (int j = 0; j < currEncs.Count; j++) {
           EncounterObject ce = currEncs[j];
-          float jv = j / currEncs.Count;
-          float cv = 1 / currEncs.Count;
+          float jv = j * 1f / currEncs.Count;
+          float jd = 1 * 1f  / currEncs.Count;
 
-          if ((jv <= iv && jv + cv >= iv) || (jv >= iv && jv - cv <= iv))
+          if ((jv <= iv && jv + jd > iv) || (jv >= iv && jv - jd < iv)
+              || (iv <= jv && iv + id > jv) || (iv >= jv && iv - id < jv))
             pe.AddNext(ce);
         }
       }
@@ -144,6 +146,11 @@ public class Floor : MonoBehaviour {
     // Connect prev to end
     foreach (EncounterObject pe in prevEncs) {
       pe.AddNext(endEnc);
+    }
+
+    // Update visual
+    foreach (EncounterObject e in encounterObjects) {
+      e.UpdateVisual();
     }
   }
 }

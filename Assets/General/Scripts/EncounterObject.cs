@@ -17,6 +17,7 @@ public class EncounterObject : MonoBehaviour {
   private bool isEnd = false;
 
   public GameObject visualPrefab;
+  public GameObject linePrefab;
   public Material startMat;
   public Material endMat;
   public Material defaultMat;
@@ -32,20 +33,17 @@ public class EncounterObject : MonoBehaviour {
   public void SetEncounter(Encounter e, Floor f) {
     encounter = e;
     floor = f;
-    UpdateVisual();
   }
 
   public void SetStart(Floor f) {
     isStart = true;
     floor = f;
     unlocked = true;
-    UpdateVisual();
   }
 
   public void SetEnd(Floor f) {
     isEnd = true;
     floor = f;
-    UpdateVisual();
   }
 
   public void Skip() {
@@ -95,7 +93,7 @@ public class EncounterObject : MonoBehaviour {
     UpdateVisual();
   }
 
-  private void UpdateVisual() {
+  public void UpdateVisual() {
     // Clear current visual
     foreach (Transform child in transform)
       Destroy(child.gameObject);
@@ -110,16 +108,20 @@ public class EncounterObject : MonoBehaviour {
     if (isStart) {
       // Set as start node
       mr.material = startMat;
-      return;
-    }
-
-    if (isEnd) {
+    } else if (isEnd) {
       // Set as end node
       mr.material = endMat;
-      return;
+    } else {
+      // Set based on encounter
+      mr.material = defaultMat;
     }
 
-    // Set based on encounter
-    mr.material = defaultMat;
+    // Lines to neighbors
+    foreach (EncounterObject e in nextEncs) {
+      LineRenderer lr = Instantiate(linePrefab, transform).GetComponent<LineRenderer>();
+      lr.SetPositions(new Vector3[2] {
+        transform.position, e.transform.position
+      });
+    }
   }
 }
