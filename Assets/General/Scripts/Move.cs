@@ -56,7 +56,8 @@ public abstract class Move {
     return false;
   }
 
-  public static void StandardDamage(Move move, Unit user, Unit target, DamageType type) {
+  public static void StandardDamage(Move move, Unit user, Unit target,
+                                    DamageType type, Affinity aff = Affinity.Nu) {
 
     float damage = move.GetDamage();
     damage *= Random.Range(0.9f, 1.1f);
@@ -73,13 +74,14 @@ public abstract class Move {
     if (miss)
       damage = 0;
 
-    target.DealDamage(damage, type, crit, miss);
+    target.DealDamage(damage, type, aff, crit, miss);
 
     if (!miss)
       user.currentEnergy += move.GetEnergyGain();
   }
 
-  public static void SteadyDamage(Move move, Unit user, Unit target, DamageType type) {
+  public static void SteadyDamage(Move move, Unit user, Unit target,
+                                  DamageType type, Affinity aff = Affinity.Nu) {
 
     float damage = move.GetDamage();
     damage *= Random.Range(0.9f, 1.1f);
@@ -87,7 +89,7 @@ public abstract class Move {
     bool crit = false;
     bool miss = false;
 
-    target.DealDamage(damage, type, crit, miss);
+    target.DealDamage(damage, type, aff, crit, miss);
 
     if (!miss)
       user.currentEnergy += move.GetEnergyGain();

@@ -26,6 +26,8 @@ public abstract class Monster {
 
   public abstract void SetAttributes();
 
+  public abstract Affinity[] GetAffinity();
+
   public int GetAttribute(Attribute attr) {
     return attributes[attr];
   }

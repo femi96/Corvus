@@ -121,7 +121,11 @@ public class Unit : MonoBehaviour {
   }
 
   public void DealDamage(float damage, DamageType type = DamageType.True,
+                         Affinity affinity = Affinity.Nu,
                          bool crit = false, bool miss = false) {
+
+    // Affinity modifier
+    damage *= AffinityCalc.GetModifier(affinity, monster.GetAffinity());
 
     // Damage effect on energy
     currentEnergy += Mathf.RoundToInt(damage / 200f * monster.EnergyMod());

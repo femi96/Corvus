@@ -25,4 +25,8 @@ public class Ashire : Monster {
     attributes[Attribute.Wis] = 4;
     attributes[Attribute.Wil] = 5;
   }
+
+  public override Affinity[] GetAffinity() {
+    return new Affinity[1] { Affinity.Fei };
+  }
 }

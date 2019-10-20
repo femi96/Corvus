@@ -26,4 +26,8 @@ public class Shen : Monster {
     attributes[Attribute.Vit] = 5;
     attributes[Attribute.Rea] = 4;
   }
+
+  public override Affinity[] GetAffinity() {
+    return new Affinity[2] { Affinity.Um, Affinity.Cuo };
+  }
 }

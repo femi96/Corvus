@@ -56,10 +56,10 @@ public class Flamethrower : Move {
 
     if (user.team != unit.team) {
       if (!targetsHit.ContainsKey(unit)) {
-        SteadyDamage(this, user, unit, DamageType.Magical);
+        SteadyDamage(this, user, unit, DamageType.Magical, Affinity.Fei);
         targetsHit.Add(unit, Time.time);
       } else if (targetsHit[unit] <= Time.time - hitDeltaSec) {
-        SteadyDamage(this, user, unit, DamageType.Magical);
+        SteadyDamage(this, user, unit, DamageType.Magical, Affinity.Fei);
         targetsHit[unit] = Time.time;
       }
     }
