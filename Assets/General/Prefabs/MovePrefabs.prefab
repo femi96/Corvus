@@ -154,6 +154,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   unitPrefab: {fileID: 1786158039230264, guid: 460015c0821aa5544a3690a4608a2cba, type: 2}
+  debugAnchorPrefab: {fileID: 1171544981928292, guid: a17240d1752ab5847ba436f6a4626a7e,
+    type: 2}
   ashirePrefab: {fileID: 1867281160195042, guid: 8f67e1ca911f1a24887b7eaca693839e,
     type: 2}
   shenPrefab: {fileID: 1867281160195042, guid: d4167103a6b5d9340871b7591e620652, type: 2}
