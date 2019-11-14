@@ -17,6 +17,7 @@ ToDos:
  - Foot locations with inverse kinematics
  - Head target looking
  - Make faceOnPlane use acceleration with (just under?) critically dampened spring system
+ - Add wind field that applies to all forces
 
 Pieces:
  - Main - Force towards anchor point, used to move entire system

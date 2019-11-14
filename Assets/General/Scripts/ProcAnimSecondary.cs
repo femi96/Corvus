@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ProcAnimSecondary : ProcAnim {
 
-  [Header("Foot Variables")]
+  [Header("Secondary Variables")]
   public ProcAnim anchorPiece;
   private Transform anchorTransform;
   public Vector3 anchorOffset;
