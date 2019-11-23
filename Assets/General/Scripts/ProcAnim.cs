@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,8 +13,6 @@ To maintain smoothness of movements, try to maintain 2nd order continuity, i.e. 
 
 ToDos:
  - Add bounce arc where height is inverse of speed, period is distance traveled
- - Add steps based on distance traveled
- - Foot locations with inverse kinematics
  - Head target looking
  - Make faceOnPlane use acceleration with (just under?) critically dampened spring system
  - Add wind field that applies to all forces
@@ -22,7 +20,8 @@ ToDos:
 Pieces:
  - Main - Force towards anchor point, used to move entire system
  - Secondary - Force towards anchor point relative to an anchor piece for secondary motion
- - Foot - Force to position on ground. Doesn't slide on ground. Inverse kinematics to anchor
+ - Foot - Jump to position on ground. Doesn't slide on ground
+ - Head - Looks at target, with secondary force
 
 Math notes:
   critical drag = 2 * sqrt(pull * mass)
@@ -121,13 +120,13 @@ public abstract class ProcAnim : MonoBehaviour {
   public abstract void UpdateForce();
 
   // If use a face rotation target to rotate piece on plane
-  public virtual bool UseFaceTarget() { return true; }
+  public virtual bool UseFaceTarget() { return false; }
 
   // Update faceOnPlaneTarget
   public virtual void UpdateFaceTarget() {}
 
   // If use acceleration tilt
-  public virtual bool UseAccTilt() { return true; }
+  public virtual bool UseAccTilt() { return false; }
 
   // Startup behavior
   public virtual void PieceStart() {}

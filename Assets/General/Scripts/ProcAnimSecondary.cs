@@ -32,7 +32,7 @@ public class ProcAnimSecondary : ProcAnim {
     faceOnPlaneTarget = anchorPiece.faceOnPlane;
   }
 
-  public override bool UseAccTilt() { return false; }
+  public override bool UseFaceTarget() { return false; }
 
   public override void PieceStart() {
     anchorTransform = anchorPiece.transform;

@@ -22,6 +22,10 @@ public class ProcAnimMain : ProcAnim {
     faceOnPlaneTarget = vel - vel.y * Vector3.up;
   }
 
+  public override bool UseAccTilt() { return true; }
+
+  public override bool UseFaceTarget() { return true; }
+
   public override void PieceStart() {
     anchorOffset = transform.position - anchorTransform.position;
   }

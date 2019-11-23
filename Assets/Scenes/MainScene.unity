@@ -113,6 +113,105 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &1613447
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1613448}
+  - component: {fileID: 1613451}
+  - component: {fileID: 1613450}
+  - component: {fileID: 1613449}
+  m_Layer: 0
+  m_Name: Head
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1613448
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1613447}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 1, z: 0.7}
+  m_LocalScale: {x: 0.19999999, y: 0.2, z: 0.3}
+  m_Children: []
+  m_Father: {fileID: 2090521609}
+  m_RootOrder: 8
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1613449
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1613447}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 073e32737f5e3ee47b36419296496201, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mass: 1
+  force: {x: 0, y: 0, z: 0}
+  acc: {x: 0, y: 0, z: 0}
+  vel: {x: 0, y: 0, z: 0}
+  pos: {x: 0, y: 0, z: 0}
+  faceOnPlane: {x: 0, y: 0, z: 1}
+  faceOnPlaneTarget: {x: 0, y: 0, z: 1}
+  turnSpeed: 180
+  accTilt: 4
+  maxTilt: 45
+  lookTransform: {fileID: 0}
+  anchorPiece: {fileID: 1012039327}
+  anchorOffset: {x: 0, y: 0, z: 0}
+  pull: 4
+  drag: 4
+--- !u!23 &1613450
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1613447}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 4294967295
+  m_Materials:
+  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+--- !u!33 &1613451
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1613447}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!114 &55242938 stripped
 MonoBehaviour:
   m_PrefabParentObject: {fileID: 114181388827580722, guid: 931a0d8188516584a821d09e8a95e7ad,
@@ -446,7 +545,7 @@ MonoBehaviour:
   drag: 20
   strideDist: 0.5
   speedForMaxStride: 0.5
-  debugAnchor: 1
+  debugAnchor: 0
 --- !u!23 &355353334
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -792,7 +891,7 @@ MonoBehaviour:
   anchorOffset: {x: 0, y: 0, z: 0}
   pull: 20
   drag: 1
-  debugAnchor: 1
+  debugAnchor: 0
 --- !u!23 &807260976
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -893,7 +992,7 @@ MonoBehaviour:
   drag: 20
   strideDist: 0.5
   speedForMaxStride: 0.5
-  debugAnchor: 1
+  debugAnchor: 0
 --- !u!23 &810184722
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1090,7 +1189,7 @@ MonoBehaviour:
   anchorOffset: {x: 0, y: 0, z: 0}
   pull: 20
   drag: 1
-  debugAnchor: 1
+  debugAnchor: 0
 --- !u!23 &1122057573
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1271,7 +1370,7 @@ MonoBehaviour:
   drag: 20
   strideDist: 0.5
   speedForMaxStride: 0.5
-  debugAnchor: 1
+  debugAnchor: 0
 --- !u!23 &1619206344
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1558,7 +1657,7 @@ MonoBehaviour:
   drag: 20
   strideDist: 0.5
   speedForMaxStride: 0.5
-  debugAnchor: 1
+  debugAnchor: 0
 --- !u!23 &1847160876
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1983,6 +2082,7 @@ Transform:
   - {fileID: 1847160874}
   - {fileID: 355353332}
   - {fileID: 1619206342}
+  - {fileID: 1613448}
   m_Father: {fileID: 0}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

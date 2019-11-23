@@ -65,7 +65,7 @@ public class ProcAnimFoot : ProcAnim {
     faceOnPlaneTarget = footDir;
   }
 
-  public override bool UseAccTilt() { return false; }
+  public override bool UseFaceTarget() { return true; }
 
   public override void PieceStart() {
     anchorTransform = anchorPiece.transform;
