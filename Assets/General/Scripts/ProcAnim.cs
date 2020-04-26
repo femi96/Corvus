@@ -13,7 +13,6 @@ To maintain smoothness of movements, try to maintain 2nd order continuity, i.e. 
 
 ToDos:
  - Add bounce arc where height is inverse of speed, period is distance traveled
- - Head target looking
  - Make faceOnPlane use acceleration with (just under?) critically dampened spring system
  - Add wind field that applies to all forces
 
@@ -79,13 +78,13 @@ public abstract class ProcAnim : MonoBehaviour {
         float disN = (rotN - faceOnPlaneTarget).magnitude;
         float disT = (faceOnPlane - faceOnPlaneTarget).magnitude;
 
-        if (disT < disP && disT < disN)
+        if (disT < disP && disT < disN && faceOnPlaneTarget.magnitude > 0)
           faceOnPlane = faceOnPlaneTarget;
 
-        if (disP < disT && disP < disN)
+        if (disP < disT && disP < disN && rotP.magnitude > 0)
           faceOnPlane = rotP;
 
-        if (disN < disP && disN < disT)
+        if (disN < disP && disN < disT && rotN.magnitude > 0)
           faceOnPlane = rotN;
       }
 
